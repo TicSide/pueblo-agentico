@@ -1,5 +1,9 @@
 # Pueblo Agéntico
 
+**English:** a living voxel town for [Wallpaper Engine](https://www.wallpaperengine.io/). 191 characters live on 14 floating islands, with weather, seasons and events. The wallpaper works on its own in 8 languages. This repository adds the optional companion app: conversations with a local AI (Ollama) and a character editor.
+
+Created by **TicSide**. © 2026, [CC BY-NC-ND 4.0](LICENSE): you may use and share it unmodified with credit, but not sell it or publish modified versions. See [COPYRIGHT.md](COPYRIGHT.md).
+
 Wallpaper animado para [Wallpaper Engine](https://www.wallpaperengine.io/): un archipiélago isométrico voxel con 14 zonas y 191 personajes que comen, duermen, trabajan, se saludan, discuten y charlan entre ellos con una IA local.
 
 ![Vista del archipiélago](wallpaper/preview.png)
@@ -12,6 +16,7 @@ Wallpaper animado para [Wallpaper Engine](https://www.wallpaperengine.io/): un a
 - **Editor de personajes**: crea vecinos nuevos o cambia los que ya existen, con vista previa 3D. Lo que guardas aparece al instante, y un botón lleva la cámara hasta ese personaje.
 - **Buscador**: encuentra a cualquier vecino con el mouse y la cámara va hasta donde está.
 - **Clima, estaciones y eventos**: lluvia, nieve, Halloween, Navidad, conciertos y más, según la fecha real.
+- **8 idiomas**: español, inglés, portugués, francés, alemán, ruso, chino y japonés. Se elige en el engranaje o en las propiedades de Wallpaper Engine; en automático usa el del sistema.
 
 ## Instalación
 
@@ -38,6 +43,8 @@ Para la IA, instala Ollama y descarga el modelo indicado en `cerebro/config.json
 | Hablarle al pueblo | `Ctrl+Alt+H` |
 | Cambiar la interfaz | Botón del engranaje |
 
+Las frases de los vecinos y los nombres de los lugares están en español e inglés; los demás idiomas usan el inglés para eso. Con la IA encendida, los vecinos hablan en el idioma elegido. El editor y el panel del cerebro están en español.
+
 Wallpaper Engine no pasa el teclado a los wallpapers. Por eso el editor se abre en el navegador y el buscador funciona solo con el mouse.
 
 ## Estructura
@@ -47,9 +54,13 @@ Wallpaper Engine no pasa el teclado a los wallpapers. Por eso el editor se abre 
 - `wallpaper/js/personalizados.js`: los personajes que creas o cambias con el editor. Lo escribe el cerebro.
 - `cerebro/datos/`: memoria del pueblo en tu PC. No se sube al repositorio.
 - `wallpaper/fotos/`: fotos opcionales para las fichas. No se incluyen: cada quien pone las suyas.
+- `wallpaper/js/idiomas.js` e `idioma-en.js`: traducciones.
+- `publicar/`: paquete y textos para Steam Workshop.
 
 Más detalle en [docs/ARQUITECTURA.md](docs/ARQUITECTURA.md). Para revisar los datos después de cambiarlos, ejecuta `npm test` en `cerebro/`.
 
-## Aviso
+## Licencia
 
-Es un proyecto personal de fans, sin fines comerciales y sin relación con las empresas o franquicias que aparecen. Los personajes, marcas y logos pertenecen a sus dueños.
+Creado por **TicSide**. © 2026. La obra original está bajo [CC BY-NC-ND 4.0](LICENSE): puedes usarla y compartirla sin modificar y dando crédito, pero no venderla ni publicar versiones modificadas. Detalles y licencias de terceros en [COPYRIGHT.md](COPYRIGHT.md).
+
+Es un proyecto de fans, sin fines comerciales y sin relación con las empresas o franquicias que aparecen. Los personajes, marcas y logos pertenecen a sus dueños y la licencia no da ningún derecho sobre ellos.

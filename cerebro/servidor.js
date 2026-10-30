@@ -10,6 +10,8 @@ const { WebSocketServer } = require('ws');
 const SimCore = require('../wallpaper/js/sim-core.js');
 const DP = require('../wallpaper/js/datos-personajes.js');
 const DM = require('../wallpaper/js/datos-mundo.js');
+const Idiomas = require('../wallpaper/js/idiomas.js');
+require('../wallpaper/js/idioma-en.js');
 const { IA } = require('./ia.js');
 const { Memoria } = require('./memoria.js');
 const { Personalizados } = require('./personalizados.js');
@@ -27,11 +29,13 @@ const memoria = new Memoria(path.join(__dirname, 'datos', 'estado.json'));
 const guardado = memoria.cargar();
 // Preferencias que sobreviven a reinicios: IA encendida o apagada, y el clima elegido en el wallpaper
 const prefs = new Memoria(path.join(__dirname, 'datos', 'preferencias.json'));
-const PREF = Object.assign({ iaActiva: true, clima: null }, prefs.cargar() || {});
+const PREF = Object.assign({ iaActiva: true, clima: null, idioma: 'es' }, prefs.cargar() || {});
 const guardarPref = () => { try { prefs.guardar(PREF); } catch (e) { log('no se pudo guardar preferencias:', e.message); } };
 const historialUsuario = (guardado && guardado.usuario) || [];
 const ia = new IA(CFG.ollama, log);
 ia.activa = PREF.iaActiva !== false;
+ia.idioma = PREF.idioma;
+Idiomas.aplicar(PREF.idioma, SimCore, DP, DM);
 const clientes = new Set();
 const editor = new Personalizados(DP, log);
 let ultimoLatido = 0, seleccionado = null;
@@ -43,7 +47,7 @@ function difundir(m) {
 
 // ---------------- simulación ----------------
 const sim = new SimCore.Simulacion({
-  personajes: DP.personajes, mundo: DM, guardado, clima: PREF.clima || {},
+  personajes: Idiomas.traducirLista(DP.personajes, DP), mundo: DM, guardado, clima: PREF.clima || {},
   config: { charlaCada: CFG.charlaCada, pensamientoCada: CFG.pensamientoCada, maxCharlas: CFG.maxCharlas, suenoDesde: CFG.suenoDesde, suenoHasta: CFG.suenoHasta },
   alEvento: (e) => {
     difundir(e);
@@ -70,7 +74,7 @@ async function cambiarIA(activa) {
   PREF.iaActiva = activa; guardarPref();
   if (activa) { if (!ia.activa || ia.estado === 'apagada' || ia.estado === 'offline') await ia.encender(); }
   else if (ia.activa || ia.estado !== 'apagada') await ia.apagar();
-  sim.registrar(activa ? 'La IA local se encendió.' : 'La IA local se apagó: el pueblo sigue con frases pregrabadas.');
+  sim.registrar(Idiomas.t(activa ? 'La IA local se encendió.' : 'La IA local se apagó: el pueblo sigue con frases pregrabadas.'));
   difundir(Object.assign({ t: 'ia' }, estadoIA()));
 }
 function guardar() {
@@ -84,8 +88,16 @@ ia.alCambio = () => difundir(Object.assign({ t: 'ia' }, estadoIA()));
 function cambioPersonajes() {
   DP.personajes = DP.combinar(editor.datos);
   difundir({ t: 'personalizados', datos: editor.datos });
-  sim.sincronizar(DP.personajes);
+  sim.sincronizar(Idiomas.traducirLista(DP.personajes, DP));
   guardar();
+}
+// El wallpaper avisa en qué idioma está: las frases, los textos y la IA lo siguen
+function cambiarIdioma(lang) {
+  if (lang === PREF.idioma || !Idiomas.LISTA.some((l) => l[0] === lang)) return;
+  PREF.idioma = ia.idioma = lang; guardarPref();
+  Idiomas.aplicar(lang, SimCore, DP, DM);
+  sim.sincronizar(Idiomas.traducirLista(DP.personajes, DP));
+  log('🌐 Idioma: ' + lang);
 }
 function abrirEditor(id) {
   const q = /^[a-z0-9_]{1,40}$/.test(id || '') ? '?id=' + id : '';
@@ -168,7 +180,7 @@ async function mensajeUsuario(texto, preferido) {
   historialUsuario.push(texto);
   while (historialUsuario.length > 12) historialUsuario.shift();
   difundir({ t: 'usuario', texto });
-  sim.registrar('👤 Tú: ' + texto);
+  sim.registrar('👤 ' + Idiomas.t('TÚ') + ': ' + texto);
   log('👤 Usuario:', texto);
   for (const id of elegirObjetivos(texto, preferido)) {
     await responderA(id, `El usuario te dice: "${texto}"`, 0, { permitirAccion: true, ordenTexto: ordenDe(texto), recuerdo: `El usuario me dijo: "${texto.slice(0, 120)}"` });
@@ -188,7 +200,7 @@ function interaccion(id, accion) {
   if (!sim.estado[id] || !INTER[accion]) return;
   sim.interactuar(id, accion);
   const [msg, fb] = INTER[accion];
-  responderA(id, msg, 1, { fallback: fb, recuerdo: `El usuario usó "${accion}" conmigo` });
+  responderA(id, msg, 1, { fallback: Idiomas.t(fb), recuerdo: `El usuario usó "${accion}" conmigo` });
 }
 
 // ---------------- servidor HTTP + WebSocket ----------------
@@ -253,6 +265,7 @@ wss.on('connection', (ws, req) => {
       case 'interaccion': interaccion(m.id, m.accion); break;
       case 'seleccion': seleccionado = m.id || null; break;
       case 'ia_activa': cambiarIA(m.activa); break;
+      case 'idioma': cambiarIdioma(m.lang); break;
       case 'abrir_editor': abrirEditor(m.id); break;
       case 'clima': if (m.opc && typeof m.opc === 'object') { sim.ajustarClima(m.opc); PREF.clima = m.opc; guardarPref(); } break;
       case 'ficha': {

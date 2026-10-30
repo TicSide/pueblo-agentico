@@ -18,6 +18,14 @@ Si el cerebro está apagado, el wallpaper corre la misma simulación por su cuen
 
 Después de cambiar datos compartidos hay que reiniciar el cerebro y recargar el wallpaper.
 
+## Idiomas
+
+`wallpaper/js/idiomas.js` guarda las traducciones de la interfaz, las actividades y las islas, con el texto en español como clave: `Idiomas.t('MAPA')`. `idioma-en.js` trae el contenido completo en inglés (frases, personalidades, lugares y comentarios); los otros idiomas usan ese. El español sigue en los datos originales.
+
+`Idiomas.aplicar` traduce los datos compartidos antes de construir el mundo, y `Idiomas.traducirLista` hace una copia de los personajes: los originales quedan intactos porque el editor los compara, y lo que el usuario cambió no se pisa. El wallpaper le avisa su idioma al cerebro con `{t: 'idioma', lang}`.
+
+Al agregar textos, actividades o vecinos, `npm test` avisa lo que falta traducir.
+
 ## Wallpaper
 
 - `mundo.js`: construye el mundo. Casi todo se fusiona en pocas mallas con `PA.Geo.Lote`.

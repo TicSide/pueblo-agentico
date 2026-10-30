@@ -6,6 +6,7 @@ PA.UI = (function () {
   'use strict';
   const $ = (id) => document.getElementById(id);
   const I = (n, e) => PA.Iconos.svg(n, e);
+  const t = (s) => Idiomas.t(s);
   const NEC = [['energia', 'ENERGÍA', 'energia', '#e8a91a'], ['comida', 'COMIDA', 'comida', '#d9473b'], ['diversion', 'DIVERSIÓN', 'diversion', '#c86ad9'], ['social', 'SOCIAL', 'social', '#3a7ad9'], ['calma', 'CALMA', 'calma', '#4f8a32']];
   const NOMBRE_EMO = { neutral: 'tranquilo', contento: 'contento', feliz: 'feliz', riendo: 'riendo', emocionado: 'emocionado', sereno: 'sereno', triste: 'triste', lloroso: 'llorando', enojado: 'enojado', sorprendido: 'sorprendido', asustado: 'asustado', pensativo: 'pensativo', picaro: 'pícaro', enamorado: 'enamorado', cansado: 'cansado', dormido: 'dormido', aburrido: 'aburrido', confundido: 'confundido', orgulloso: 'orgulloso', avergonzado: 'avergonzado', nervioso: 'nervioso', serio: 'serio', decidido: 'decidido' };
 
@@ -50,6 +51,15 @@ PA.UI = (function () {
     $('btn-ia').addEventListener('click', (e) => { e.stopPropagation(); app.alternarIA(); });
     escalar();
     addEventListener('resize', escalar);
+    traducir();
+  }
+  // Textos fijos de index.html: data-t usa su texto (o la clave indicada) y data-tt traduce el título
+  function traducir() {
+    if (Idiomas.actual === 'es') return;
+    for (const e of document.querySelectorAll('[data-t]')) e.innerHTML = t(e.dataset.t || e.textContent);
+    for (const e of document.querySelectorAll('[data-tt]')) e.title = t(e.title);
+    $('credito-ayuda').textContent = Idiomas.credito();
+    $('lineas').dataset.vacio = t($('lineas').dataset.vacio);
   }
   // tamaño de la interfaz según la pantalla (1536, 1920, 2560...)
   function escalar() {
@@ -163,14 +173,14 @@ PA.UI = (function () {
     while (r.children.length > op.lineas) r.firstChild.remove();
     while (r.children.length > 1 && r.scrollHeight > r.clientHeight + 1) r.firstChild.remove();
   }
-  function dicho(actor, texto, modo) { registro(`<b style="color:${oscuro(colorDe(actor.d))}">${esc(actor.d.corto)}</b>${modo === 'piensa' ? ' <em>piensa</em>' : ''} ${esc(texto)}`); }
+  function dicho(actor, texto, modo) { registro(`<b style="color:${oscuro(colorDe(actor.d))}">${esc(actor.d.corto)}</b>${modo === 'piensa' ? ` <em>${t('piensa')}</em>` : ''} ${esc(texto)}`); }
   function nota(texto) { registro(esc(texto), 'nota'); }
 
   // ---------- mensaje del usuario ----------
   let tBanner = 0;
   function banner(texto) {
     const b = $('banner');
-    b.innerHTML = `<span class="tu">TÚ</span><span>${esc(texto)}</span>`;
+    b.innerHTML = `<span class="tu">${t('TÚ')}</span><span>${esc(texto)}</span>`;
     b.classList.add('visible');
     clearTimeout(tBanner);
     tBanner = setTimeout(() => b.classList.remove('visible'), 9000);
@@ -205,10 +215,10 @@ PA.UI = (function () {
     ultimoClima = clave;
     const icoCli = info.clima === 'despejado' ? (info.esNoche ? 'luna' : 'sol') : PA.Iconos.CLIMA[info.clima];
     $('ico-clima').innerHTML = I(icoCli, 2) + ' ' + I(PA.Iconos.ESTACION[info.estacion], 2);
-    $('clima').textContent = NOMBRE_EST[info.estacion] + ' · ' + NOMBRE_CLI[info.clima];
+    $('clima').textContent = t(NOMBRE_EST[info.estacion]) + ' · ' + t(NOMBRE_CLI[info.clima]);
     const ev = info.eventos.filter((e) => NOMBRE_EVE[e]);
     $('evento').classList.toggle('visible', ev.length > 0);
-    $('evento').innerHTML = ev.map((e) => `${I(PA.Iconos.EVENTO[e] || 'estrella', 2)}<span>${NOMBRE_EVE[e]}</span>`).join('<span>·</span>');
+    $('evento').innerHTML = ev.map((e) => `${I(PA.Iconos.EVENTO[e] || 'estrella', 2)}<span>${t(NOMBRE_EVE[e])}</span>`).join('<span>·</span>');
   }
   let tAviso = 0;
   function aviso(titulo, texto, icono) {
@@ -221,9 +231,9 @@ PA.UI = (function () {
   }
   function interruptorIA(info) {
     const b = $('btn-ia');
-    b.disabled = !info.disponible;
     b.classList.toggle('on', !!info.activa);
-    b.title = !info.disponible ? 'Sin cerebro: ejecuta instalar.ps1 para tener la IA local' : info.activa ? 'Apagar la IA (y Ollama)' : 'Encender la IA';
+    b.classList.toggle('sin-app', !info.disponible);
+    b.title = t(!info.disponible ? 'Esto necesita la app gratuita: github.com/TicSide/pueblo-agentico' : info.activa ? 'Apagar la IA' : 'Encender la IA');
   }
   const NOMBRE_EVENTO = NOMBRE_EVE;
   function olvidar(id) { const e = etiquetas[id]; if (e) { e.el.remove(); delete etiquetas[id]; } for (const b of burbujas) if (b.actor.id === id) b.fin = 0; for (const c of iconos) if (c.actor.id === id) c.fin = 0; }
@@ -234,7 +244,7 @@ PA.UI = (function () {
     const f = $('ficha');
     f.style.setProperty('--serie', col);
     f.innerHTML = `
-      <button class="cerrar" title="Cerrar">${I('cerrar', 2)}</button>
+      <button class="cerrar" title="${t('Cerrar')}">${I('cerrar', 2)}</button>
       <header>
         <div class="retrato">${d.foto || !d.creado ? `<img alt="" src="${esc(d.foto || `fotos/${d.id}.png`)}">` : ''}<canvas width="112" height="112"></canvas></div>
         <div class="titulo">
@@ -245,19 +255,19 @@ PA.UI = (function () {
         ${d.emblema === 'redjohn' ? `<div class="emblema" title="Red John">${I('redjohn', 4)}</div>` : ''}
       </header>
       <div class="actividad"><i class="ico-act"></i><span class="txt-act"></span><small class="txt-zona"></small></div>
-      <div class="necesidades">${NEC.map(([k, n, ic, c]) => `<div class="nec" data-nec="${k}"><i>${I(ic, 2)}</i><label>${n}</label><div class="segs" style="--c:${c}">${'<span></span>'.repeat(10)}</div></div>`).join('')}</div>
+      <div class="necesidades">${NEC.map(([k, n, ic, c]) => `<div class="nec" data-nec="${k}"><i>${I(ic, 2)}</i><label>${t(n)}</label><div class="segs" style="--c:${c}">${'<span></span>'.repeat(10)}</div></div>`).join('')}</div>
       <p class="perso">${esc(d.personalidad)}</p>
       <div class="rel"></div>
-      <div class="mem"><h4>RECUERDOS</h4><ul></ul></div>
+      <div class="mem"><h4>${t('RECUERDOS')}</h4><ul></ul></div>
       <div class="botones">
-        <button data-accion="saludar">${I('saludar', 2)}<span>SALUDAR</span></button>
-        <button data-accion="hablar">${I('hablar', 2)}<span>HABLAR</span></button>
-        <button data-accion="comida">${I('pizza', 2)}<span>COMIDA</span></button>
-        <button data-accion="jugar">${I('control', 2)}<span>JUGAR</span></button>
-        <button data-accion="dormir">${I('dormir', 2)}<span>DORMIR</span></button>
-        <button data-accion="socializar">${I('social', 2)}<span>SOCIALIZAR</span></button>
-        <button data-accion="seguir" class="b-seguir">${I('seguir', 2)}<span>SEGUIR</span></button>
-        <button data-accion="editar">${I('lapiz', 2)}<span>EDITAR</span></button>
+        <button data-accion="saludar">${I('saludar', 2)}<span>${t('SALUDAR')}</span></button>
+        <button data-accion="hablar">${I('hablar', 2)}<span>${t('HABLAR')}</span></button>
+        <button data-accion="comida">${I('pizza', 2)}<span>${t('COMIDA')}</span></button>
+        <button data-accion="jugar">${I('control', 2)}<span>${t('JUGAR')}</span></button>
+        <button data-accion="dormir">${I('dormir', 2)}<span>${t('DORMIR')}</span></button>
+        <button data-accion="socializar">${I('social', 2)}<span>${t('SOCIALIZAR')}</span></button>
+        <button data-accion="seguir" class="b-seguir">${I('seguir', 2)}<span>${t('SEGUIR')}</span></button>
+        <button data-accion="editar">${I('lapiz', 2)}<span>${t('EDITAR')}</span></button>
       </div>`;
     refs = {
       canvas: f.querySelector('.retrato canvas'), retrato: f.querySelector('.retrato'), animo: f.querySelector('.txt-animo'), icoAnimo: f.querySelector('.ico-animo'),
@@ -280,7 +290,7 @@ PA.UI = (function () {
     if (fichaId !== actor.id) { fichaId = actor.id; crearFicha(actor); f.classList.add('visible'); }
     const i = info || {};
     const emo = i.emocion || actor.emocion;
-    refs.animo.textContent = (NOMBRE_EMO[emo] || emo || '').toUpperCase();
+    refs.animo.textContent = t(NOMBRE_EMO[emo] || emo || '').toUpperCase();
     refs.icoAnimo.innerHTML = I(PA.Iconos.EMOCION[emo] || 'puntos', 2);
     if (i.actividad) refs.act.textContent = i.actividad;
     refs.zona.textContent = i.zona ? ' · ' + i.zona : '';
@@ -290,18 +300,19 @@ PA.UI = (function () {
     const rel = (i.relaciones || []).slice(0, 4);
     if (rel.join() !== ultimaRel) { ultimaRel = rel.join(); refs.rel.innerHTML = rel.map((r) => `<span>${esc(r)}</span>`).join(''); }
     const mem = (i.recuerdos || []).slice(-3).reverse();
-    if (mem.join() !== ultimaMem || !refs.mem.children.length) { ultimaMem = mem.join(); refs.mem.innerHTML = mem.map((r) => `<li>${esc(r)}</li>`).join('') || '<li class="vacio">Todavía no recuerda nada especial.</li>'; }
-    refs.seguir.textContent = PA.Escena.siguiendo === actor.rig.raiz ? 'MAPA' : 'SEGUIR';
+    if (mem.join() !== ultimaMem || !refs.mem.children.length) { ultimaMem = mem.join(); refs.mem.innerHTML = mem.map((r) => `<li>${esc(r)}</li>`).join('') || `<li class="vacio">${t('Todavía no recuerda nada especial.')}</li>`; }
+    refs.seguir.textContent = t(PA.Escena.siguiendo === actor.rig.raiz ? 'MAPA' : 'SEGUIR');
   }
   // ---------- buscador de vecinos ----------
   // Va con el mouse (Wallpaper Engine no pasa el teclado): letras, grupos e islas; el campo de texto sirve en el navegador
   const bus = { letra: '', grupo: '', isla: '', texto: '' };
   const sinTilde = (s) => String(s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const sinArticulo = (s) => s.replace(/^(el|la|los|las|the) /i, '');
   function lugarDe(actor) {
     const sp = actor.spot, ac = sp && SimCore.ACT[actor.act];
-    const que = ac ? (ac.txtEn && sp.lugar ? ac.txtEn.replace('{lugar}', sp.lugar) : ac.txt) : 'Paseando';
+    const que = ac ? (ac.txtEn && sp.lugar ? ac.txtEn.replace('{lugar}', sp.lugar) : ac.txt) : SimCore.TXT.paseando;
     const zn = sp && DM().zonas.find((z) => z.id === sp.zona);
-    return que + (zn && !zn.virtual ? ' · ' + zn.nombre.replace(/^(el|la|los|las) /i, '') : '');
+    return que + (zn && !zn.virtual ? ' · ' + sinArticulo(zn.nombre) : '');
   }
   const DM = () => window.DATOS_MUNDO;
   const islaDe = (a) => (DM().islas.find((i) => a.pos.x >= i.x0 && a.pos.x <= i.x1 && a.pos.z >= i.z0 && a.pos.z <= i.z1) || {}).id;
@@ -313,18 +324,18 @@ PA.UI = (function () {
   function armarBuscador() {
     const b = $('buscador');
     const grupos = Object.keys(DP.SERIES).filter((g) => DP.personajes.some((d) => d.grupo === g));
-    const nombreI = (i) => (i.centro ? 'PUEBLO' : i.nombre.replace(/^(el|la|los|las) /i, '').toUpperCase());
-    b.innerHTML = `<h3>BUSCAR VECINO</h3><button class="cerrar-bus" title="Cerrar">${I('cerrar', 2)}</button>
-      <input id="bus-texto" type="search" placeholder="Escribe un nombre o usa las letras" autocomplete="off" aria-label="Buscar por nombre">
-      <div class="letras">${['', ...'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ'].map((l) => `<button data-letra="${l}">${l || 'TODAS'}</button>`).join('')}</div>
-      <h4>POR GRUPO</h4><div class="chips" data-tipo="grupo"><button data-v="">TODOS</button>${grupos.map((g) => `<button data-v="${esc(g)}"><i style="background:${esc(DP.SERIES[g].color)}"></i>${esc(DP.SERIES[g].nombre).toUpperCase()}</button>`).join('')}</div>
-      <h4>DÓNDE ESTÁ AHORA</h4><div class="chips" data-tipo="isla"><button data-v="">TODAS</button>${DM().islas.map((i) => `<button data-v="${esc(i.id)}">${esc(nombreI(i))}</button>`).join('')}</div>
+    const nombreI = (i) => (i.centro ? t('PUEBLO') : sinArticulo(i.nombre).toUpperCase());
+    b.innerHTML = `<h3>${t('BUSCAR VECINO')}</h3><button class="cerrar-bus" title="${t('Cerrar')}">${I('cerrar', 2)}</button>
+      <input id="bus-texto" type="search" placeholder="${esc(t('Escribe un nombre o usa las letras'))}" autocomplete="off" aria-label="${esc(t('Buscar por nombre'))}">
+      <div class="letras">${['', ...(Idiomas.actual === 'es' ? 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')].map((l) => `<button data-letra="${l}">${l || t('TODAS')}</button>`).join('')}</div>
+      <h4>${t('POR GRUPO')}</h4><div class="chips" data-tipo="grupo"><button data-v="">${t('TODOS')}</button>${grupos.map((g) => `<button data-v="${esc(g)}"><i style="background:${esc(DP.SERIES[g].color)}"></i>${esc(DP.SERIES[g].nombre).toUpperCase()}</button>`).join('')}</div>
+      <h4>${t('DÓNDE ESTÁ AHORA')}</h4><div class="chips" data-tipo="isla"><button data-v="">${t('TODAS')}</button>${DM().islas.map((i) => `<button data-v="${esc(i.id)}">${esc(nombreI(i))}</button>`).join('')}</div>
       <div class="cuenta"></div><div class="resultados"></div>`;
     b.querySelector('.cerrar-bus').onclick = () => b.classList.remove('visible');
-    const t = $('bus-texto');
-    t.value = bus.texto;
-    t.oninput = () => { bus.texto = t.value; pintarResultados(); };
-    t.onmousedown = (e) => e.stopPropagation();
+    const campo = $('bus-texto');
+    campo.value = bus.texto;
+    campo.oninput = () => { bus.texto = campo.value; pintarResultados(); };
+    campo.onmousedown = (e) => e.stopPropagation();
     b.querySelector('.letras').onclick = (e) => { const x = e.target.closest('button'); if (x) { bus.letra = x.dataset.letra; pintarResultados(); } };
     for (const c of b.querySelectorAll('.chips')) c.onclick = (e) => { const x = e.target.closest('button'); if (x) { bus[c.dataset.tipo] = x.dataset.v; pintarResultados(); } };
     b.querySelector('.resultados').onclick = (e) => { const x = e.target.closest('[data-id]'); if (x) app.ubicar(x.dataset.id); };
@@ -341,9 +352,9 @@ PA.UI = (function () {
       if (bus.grupo && d.grupo !== bus.grupo) return false;
       if (q && sinTilde(d.nombre + ' ' + d.corto + ' ' + d.serie + ' ' + (d.alias || []).join(' ')).indexOf(q) < 0) return false;
       return !bus.isla || islaDe(a) === bus.isla;
-    }).sort((x, y) => x.d.corto.localeCompare(y.d.corto, 'es'));
-    b.querySelector('.cuenta').textContent = lista.length + (lista.length === 1 ? ' VECINO' : ' VECINOS');
-    b.querySelector('.resultados').innerHTML = lista.map((a) => `<button data-id="${esc(a.id)}"><i style="background:${esc(colorDe(a.d))}"></i><b>${esc(a.d.corto)}</b><span>${esc(lugarDe(a))}</span></button>`).join('') || '<p>Nadie coincide con esa búsqueda.</p>';
+    }).sort((x, y) => x.d.corto.localeCompare(y.d.corto, Idiomas.actual));
+    b.querySelector('.cuenta').textContent = lista.length + ' ' + t(lista.length === 1 ? 'VECINO' : 'VECINOS');
+    b.querySelector('.resultados').innerHTML = lista.map((a) => `<button data-id="${esc(a.id)}"><i style="background:${esc(colorDe(a.d))}"></i><b>${esc(a.d.corto)}</b><span>${esc(lugarDe(a))}</span></button>`).join('') || `<p>${t('Nadie coincide con esa búsqueda.')}</p>`;
   }
 
   // ---------- ajustes de la interfaz ----------
@@ -351,6 +362,7 @@ PA.UI = (function () {
   const SI_NO = [[true, 'SÍ'], [false, 'NO']];
   const ESQUEMA = [
     ['INTERFAZ'],
+    ['idioma', 'IDIOMA', 'ops', [['auto', 'AUTOMÁTICO'], ...Idiomas.LISTA]],
     ['tema', 'TEMA', 'ops', [['madera', 'MADERA'], ['noche', 'NOCHE'], ['pergamino', 'PERGAMINO'], ['neon', 'NEÓN'], ['cristal', 'CRISTAL'], ['acento', 'COLOR DE WE']]],
     ['escala', 'TAMAÑO', 'rango', 60, 160, 5, '%'],
     ['opacidad', 'OPACIDAD', 'rango', 30, 100, 5, '%'],
@@ -374,14 +386,14 @@ PA.UI = (function () {
   ];
   function armarAjustes() {
     const aj = app.ajustes();
-    let h = `<h3>AJUSTES DE LA INTERFAZ</h3><button class="cerrar-aj" title="Cerrar">${I('cerrar', 2)}</button>`;
+    let h = `<h3>${t('AJUSTES DE LA INTERFAZ')}</h3><button class="cerrar-aj" title="${t('Cerrar')}">${I('cerrar', 2)}</button>`;
     for (const f of ESQUEMA) {
-      if (f.length === 1) { h += `<h4>${f[0]}</h4>`; continue; }
-      const [k, nombre, tipo] = f;
-      if (tipo === 'ops') h += `<div class="fila"><span>${nombre}</span><div class="ops">${f[3].map(([v, t], i) => `<button data-k="${k}" data-i="${i}" class="${aj[k] === v ? 'on' : ''}">${t}</button>`).join('')}</div></div>`;
+      if (f.length === 1) { h += `<h4>${t(f[0])}</h4>`; continue; }
+      const [k, clave, tipo] = f, nombre = t(clave);
+      if (tipo === 'ops') h += `<div class="fila"><span>${nombre}</span><div class="ops">${f[3].map(([v, txt], i) => `<button data-k="${k}" data-i="${i}" class="${aj[k] === v ? 'on' : ''}">${t(txt)}</button>`).join('')}</div></div>`;
       else h += `<div class="fila"><span>${nombre}</span><div class="rango"><input type="range" data-k="${k}" min="${f[3]}" max="${f[4]}" step="${f[5]}" value="${aj[k]}"><output>${aj[k]}${f[6]}</output></div></div>`;
     }
-    h += `<div class="acciones"><small>SE GUARDA SOLO. LO QUE CAMBIES EN LAS PROPIEDADES DE WALLPAPER ENGINE TAMBIÉN SE APLICA AQUÍ.</small><button data-reset="1">RESTABLECER</button></div>`;
+    h += `<div class="acciones"><small>${t('SE GUARDA SOLO. LO QUE CAMBIES EN LAS PROPIEDADES DE WALLPAPER ENGINE TAMBIÉN SE APLICA AQUÍ.')}</small><button data-reset="1">${t('RESTABLECER')}</button></div><small class="credito">${esc(Idiomas.credito())}</small>`;
     const el = $('ajustes');
     el.innerHTML = h;
     el.querySelector('.cerrar-aj').onclick = () => el.classList.remove('visible');

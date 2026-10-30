@@ -276,6 +276,8 @@
     pelea: { rel: [-100, 10], anim: ['boxeo', 'boxeo'], dur: 7, cerca: true, emo: ['enojado', 'decidido'], af: -1, solo: (a, b) => /^(gimnasio|dep_gym|jp_sumo)$/.test(a.zonaAct || '') || /^(gimnasio|dep_gym|jp_sumo)$/.test(b.zonaAct || ''), dice: [['¡Guardia arriba!', '¡Vamos, un round!'], ['¡Solo es práctica!', '¡Toma!']] },
     reverencia: { rel: [-30, 100], anim: ['reverencia', 'reverencia'], dur: 4, depie: true, emo: ['sereno', 'sereno'], af: 2, peso: 4, solo: (a, b) => a.d.region === 'japon' || b.d.region === 'japon', dice: [['Konnichiwa.', 'Es un honor.'], ['Konnichiwa.', 'El honor es mío.']] }
   };
+  // textos fijos que llegan a la pantalla (idiomas.js los traduce)
+  const TXT = { evento: 'Evento: {x}.', charlaron: '{a} y {b} charlaron', pueblo: 'el pueblo', paseando: 'Paseando', hable: 'Hablé con {x}: ', rel_cercano: ' (muy cercano)', rel_amigo: ' (amigo)', rel_enemigo: ' (enemigo)', rel_mal: ' (no le cae bien)', rel_conocido: ' (conocido)' };
   const SALUDOS = ['¡Hola, {b}!', '¿Qué tal, {b}?', '{b}, ¿cómo va todo?', 'Hey, {b}.', '¡{b}! Justo pensaba en ti.', 'Buenas, {b}.'];
 
   function azar(a, b) { return a + Math.random() * (b - a); }
@@ -486,7 +488,7 @@
       this.ultimoCal = ahora;
       const antes = this.cal ? this.cal.eventos : [];
       this.cal = calendario(new Date(ahora), this.opcClima);
-      for (const e of this.cal.eventos) if (antes.indexOf(e) < 0 && e !== 'estrellas_fugaces') this.registrar('Evento: ' + EVENTOS[e] + '.');
+      for (const e of this.cal.eventos) if (antes.indexOf(e) < 0 && e !== 'estrellas_fugaces') this.registrar(TXT.evento.replace('{x}', EVENTOS[e]));
     }
     ajustarClima(o) {
       for (const k of ['clima', 'estacion', 'hemisferio', 'eventos', 'evento']) if (o && o[k] !== undefined) this.opcClima[k] = o[k];
@@ -641,7 +643,7 @@
       const s = this.spotPorId[a.spot];
       const z = s ? this.zonaPorId[s.zona] : null;
       return {
-        zona: z ? z.nombre : 'el pueblo', hora: this.hora(), noche: this.esNoche(this.hora()),
+        zona: z ? z.nombre : TXT.pueblo, hora: this.hora(), noche: this.esNoche(this.hora()),
         actA: ACT[a.act] ? ACT[a.act].txt : 'paseando', actB: ACT[b.act] ? ACT[b.act].txt : 'paseando',
         relAB: a.rel[b.id] || 0, relBA: b.rel[a.id] || 0, clima: this.textoClima()
       };
@@ -713,10 +715,10 @@
         p.nec.social = limitar(p.nec.social + 18, 0, 100);
         if (o) {
           p.rel[o.id] = limitar((p.rel[o.id] || 0) + 2 + af * 5, -100, 100);
-          if (r.resumen && !r.enlatado) this.recordar(p.id, 'Hablé con ' + o.d.nombre + ': ' + r.resumen);
+          if (r.resumen && !r.enlatado) this.recordar(p.id, TXT.hable.replace('{x}', o.d.nombre) + r.resumen);
         }
       }
-      if (a && b) this.registrar(a.d.corto + ' y ' + b.d.corto + ' charlaron' + (r.resumen && !r.enlatado ? ': ' + r.resumen : '.'));
+      if (a && b) this.registrar(TXT.charlaron.replace('{a}', a.d.corto).replace('{b}', b.d.corto) + (r.resumen && !r.enlatado ? ': ' + r.resumen : '.'));
       this.alEvento({ t: 'fin_charla', a: c.a, b: c.b });
     }
 
@@ -842,7 +844,7 @@
     zonaDe(p) {
       const s = this.spotPorId[p.spot];
       const z = s ? this.zonaPorId[s.zona] : null;
-      return z ? z.nombre : 'el pueblo';
+      return z ? z.nombre : TXT.pueblo;
     }
 
     // Texto con el estado de un personaje (para los prompts de la IA)
@@ -852,9 +854,9 @@
       const a = ACT[p.act];
       const nec = NECESIDADES.map((n) => NOMBRE_NEC[n] + ' ' + Math.round(p.nec[n])).join(', ');
       const amigos = Object.entries(p.rel).filter(([o]) => this.porId[o]).sort((x, y) => Math.abs(y[1]) - Math.abs(x[1])).slice(0, 4)
-        .map(([o, v]) => this.porId[o].corto + (v > 40 ? ' (muy cercano)' : v > 10 ? ' (amigo)' : v < -40 ? ' (enemigo)' : v < -10 ? ' (no le cae bien)' : ' (conocido)'));
+        .map(([o, v]) => this.porId[o].corto + (v > 40 ? TXT.rel_cercano : v > 10 ? TXT.rel_amigo : v < -40 ? TXT.rel_enemigo : v < -10 ? TXT.rel_mal : TXT.rel_conocido));
       const s = this.spotPorId[p.spot];
-      const actividad = a ? (a.txtEn && s && s.lugar ? a.txtEn.replace('{lugar}', s.lugar) : a.txt) : 'Paseando';
+      const actividad = a ? (a.txtEn && s && s.lugar ? a.txtEn.replace('{lugar}', s.lugar) : a.txt) : TXT.paseando;
       return {
         actividad, zona: this.zonaDe(p), emocion: p.emocion, necesidades: nec,
         recuerdos: p.recuerdos.slice(-5), relaciones: amigos, durmiendo: !this.despierto(p)
@@ -936,5 +938,5 @@
     }
   }
 
-  return { Simulacion, ACT, GRUPOS, INTER_PAR, NECESIDADES, NOMBRE_NEC, EMOCIONES, COMENTARIOS, elegir, azar, calendario, EVENTOS, CLIMAS, ESTACIONES, NOMBRE_CLIMA, NOMBRE_ESTACION };
+  return { Simulacion, ACT, GRUPOS, INTER_PAR, NECESIDADES, NOMBRE_NEC, EMOCIONES, COMENTARIOS, SALUDOS, TXT, elegir, azar, calendario, EVENTOS, CLIMAS, ESTACIONES, NOMBRE_CLIMA, NOMBRE_ESTACION };
 });

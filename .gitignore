@@ -15,6 +15,9 @@ wallpaper/fotos/*
 # Notas internas de desarrollo
 CLAUDE.md
 
+# Paquete que se sube a Steam Workshop (se genera con publicar/preparar-workshop.js)
+dist/
+
 # Capturas de las pruebas
 .playwright-mcp/
 

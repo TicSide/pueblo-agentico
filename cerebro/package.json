@@ -2,6 +2,8 @@
   "name": "cerebro-pueblo-agentico",
   "version": "1.0.0",
   "private": true,
+  "author": "TicSide",
+  "license": "CC-BY-NC-ND-4.0",
   "description": "Cerebro local del wallpaper Pueblo Agentico: simulacion, memoria y dialogos con un modelo local (Ollama).",
   "main": "servidor.js",
   "scripts": {

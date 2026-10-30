@@ -14,7 +14,7 @@
   const app = {};
 
   // ---------------- ajustes de la interfaz (panel de ajustes y propiedades de Wallpaper Engine) ----------------
-  const AJ_DEF = { tema: 'madera', acento: '', escala: 100, opacidad: 100, pos_estado: 'ar-der', pos_diario: 'ab-der', pos_mapa: 'ab-izq', pos_botones: 'ab-der',
+  const AJ_DEF = { idioma: 'auto', tema: 'madera', acento: '', escala: 100, opacidad: 100, pos_estado: 'ar-der', pos_diario: 'ab-der', pos_mapa: 'ab-izq', pos_botones: 'ab-der',
     lineas: 7, h12: false, avisos: true, globos: 'todos', max_globos: 8, escala_globos: 100, nombres: false, trafico: 100, particulas: 100, animales: true };
   const leer = (k) => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } };
   const guardar = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* sin almacenamiento: no se recuerda */ } };
@@ -30,8 +30,11 @@
   }
   function ajustar(k, v) {
     if (!(k in AJ_DEF)) return;
+    const cambio = aj[k] !== v;
     aj[k] = v;
     guardar('pueblo-ajustes', aj);
+    // otro idioma: los datos y los letreros se arman al cargar
+    if (k === 'idioma') { if (cambio && listo) location.reload(); return; }
     if (listo) aplicarAjustes();
   }
   // Una propiedad de Wallpaper Engine se aplica solo si cambió desde la última vez que la vimos:
@@ -45,8 +48,8 @@
   app.ajustes = () => aj;
   app.actores = () => sis.lista;
   app.ajustar = ajustar;
-  app.restablecerAjustes = () => { Object.assign(aj, AJ_DEF); guardar('pueblo-ajustes', aj); aplicarAjustes(); };
-  const PROPS_AJUSTE = ['tema', 'escala', 'opacidad', 'pos_estado', 'pos_diario', 'pos_mapa', 'pos_botones', 'lineas', 'h12', 'avisos', 'globos', 'max_globos', 'escala_globos', 'nombres', 'trafico', 'particulas', 'animales'];
+  app.restablecerAjustes = () => { Object.assign(aj, AJ_DEF, { idioma: aj.idioma }); guardar('pueblo-ajustes', aj); aplicarAjustes(); };
+  const PROPS_AJUSTE = ['idioma', 'tema', 'escala', 'opacidad', 'pos_estado', 'pos_diario', 'pos_mapa', 'pos_botones', 'lineas', 'h12', 'avisos', 'globos', 'max_globos', 'escala_globos', 'nombres', 'trafico', 'particulas', 'animales'];
   const colorWE = (v) => '#' + String(v).split(' ').slice(0, 3).map((c) => ('0' + Math.round(Math.max(0, Math.min(1, parseFloat(c) || 0)) * 255).toString(16)).slice(-2)).join('');
 
   window.wallpaperPropertyListener = {
@@ -141,8 +144,8 @@
     }
   }
   function cambioConexion(on) {
-    if (on) { sim = null; modo = 'cerebro'; primeraInstantanea = !sis.lista.some((a) => a.spot); PA.UI.nota('Cerebro conectado: la IA local toma el control.'); PA.Red.enviar({ t: 'clima', opc: opcClima }); }
-    else { ia = { estado: 'offline' }; iniciarLocal(); PA.UI.nota('Cerebro desconectado: modo local con frases pregrabadas.'); }
+    if (on) { sim = null; modo = 'cerebro'; primeraInstantanea = !sis.lista.some((a) => a.spot); PA.UI.nota(Idiomas.t('Cerebro conectado: la IA local toma el control.')); PA.Red.enviar({ t: 'idioma', lang: Idiomas.actual }); PA.Red.enviar({ t: 'clima', opc: opcClima }); }
+    else { ia = { estado: 'offline' }; iniciarLocal(); PA.UI.nota(Idiomas.t('Cerebro desconectado: modo local con frases pregrabadas.')); }
   }
 
   // El editor (se abre en el navegador) guardó algo: se aplica sin recargar el wallpaper
@@ -151,16 +154,17 @@
     const k = JSON.stringify(P);
     if (k === ultimoP) return;
     ultimoP = k;
-    const lista = DP.personajes = DP.combinar(P);
+    const lista = DP.personajes = Idiomas.traducirLista(DP.combinar(P), DP);
     const cambiados = sis.sincronizar(lista);
     if (seleccionado && cambiados.indexOf(seleccionado.id) >= 0) app.seleccionar(null);
     for (const id of cambiados) { PA.UI.olvidar(id); delete cache[id]; }
     if (sim) sim.sincronizar(lista);
-    if (cambiados.length) PA.UI.nota('El pueblo se actualizó con tus cambios del editor.');
+    if (cambiados.length) PA.UI.nota(Idiomas.t('El pueblo se actualizó con tus cambios del editor.'));
   }
+  const pideApp = () => PA.UI.aviso(Idiomas.t('APP GRATUITA'), Idiomas.t('Esto necesita la app gratuita: github.com/TicSide/pueblo-agentico'), 'exclamacion');
   app.abrirEditor = (id) => {
     ultimaInteraccionUsuario = performance.now();
-    if (!PA.Red.enviar({ t: 'abrir_editor', id: id || null })) PA.UI.aviso('SIN CEREBRO', 'El editor se abre desde el cerebro: ejecuta instalar.ps1 o abre iniciar-cerebro.bat', 'exclamacion');
+    if (!PA.Red.enviar({ t: 'abrir_editor', id: id || null })) pideApp();
   };
 
   // ---------------- interacción ----------------
@@ -188,7 +192,7 @@
     sim.interactuar(id, accion);
     const d = sim.porId[id];
     const frases = { saludar: ['¡Hola! ¿Cómo estás?', '¡Hey! Te veo desde aquí.', '¡Buenas!'], comida: ['¡Gracias! ¡Qué rico!', 'Justo tenía hambre.', '¡Mmm, delicioso!'], dormir: ['Sí, me hace falta dormir...', 'Buenas noches.'], jugar: ['¡A jugar se ha dicho!', '¿Una partida?'] };
-    const t = accion === 'hablar' ? SimCore.elegir(d.frases || ['...']) : SimCore.elegir(frases[accion] || d.frases || ['...']);
+    const t = accion === 'hablar' ? SimCore.elegir(d.frases || ['...']) : Idiomas.t(SimCore.elegir(frases[accion] || d.frases || ['...']));
     sim.decir(id, d.tipo === 'gato' ? SimCore.elegir(d.frases) : t, accion === 'comida' ? 'feliz' : null);
   };
   // botones del mapa y de la IA
@@ -211,7 +215,7 @@
       const s = a.spot || a.pos;
       PA.Escena.seguir(null); PA.Escena.irA(s.x, s.z, 5.5);
       sis.marcar(null, s.x, s.z);
-      PA.UI.aviso(a.d.corto.toUpperCase() + ' ESTÁ ADENTRO', PA.UI.lugarDe(a), 'lupa');
+      PA.UI.aviso(a.d.corto.toUpperCase() + ' · ' + Idiomas.t('ESTÁ ADENTRO'), PA.UI.lugarDe(a), 'lupa');
       return;
     }
     PA.Escena.seguir(a.rig.raiz, 5.5);
@@ -219,11 +223,11 @@
     refrescarFicha(true);
   };
   app.alternarIA = () => {
-    if (modo !== 'cerebro') { PA.UI.aviso('SIN CEREBRO', 'La IA corre en el cerebro local: ejecuta instalar.ps1', 'exclamacion'); return; }
+    if (modo !== 'cerebro') { pideApp(); return; }
     const activa = !(ia.activa !== false && ia.estado !== 'apagada');
     ia.activa = activa; ia.estado = activa ? 'iniciando' : 'apagada';
     PA.Red.enviar({ t: 'ia_activa', activa });
-    PA.UI.aviso(activa ? 'ENCENDIENDO LA IA' : 'IA APAGADA', activa ? 'Arrancando Ollama y el modelo...' : 'Ollama se cerró y liberó la memoria. El pueblo sigue con frases pregrabadas.', activa ? 'brillo' : 'dormir');
+    PA.UI.aviso(Idiomas.t(activa ? 'ENCENDIENDO LA IA' : 'IA APAGADA'), Idiomas.t(activa ? 'Arrancando Ollama y el modelo...' : 'Ollama se cerró y liberó la memoria. El pueblo sigue con frases pregrabadas.'), activa ? 'brillo' : 'dormir');
   };
   app.seleccionar = function (a) {
     seleccionado = a;
@@ -311,10 +315,10 @@
       const h = horaVisual();
       noche = PA.Escena.ciclo(h);
       const durm = sis.lista.filter((a) => a.durmiendo).length, hablan = sis.lista.filter((a) => ms < a.hablandoHasta).length;
-      let clase = 'apagado', txt = 'SIN CEREBRO', modelo = 'modo local';
+      let clase = 'apagado', txt = 'MODO LOCAL', modelo = '';
       if (modo === 'cerebro') {
         modelo = ia.modelo || '';
-        if (ia.estado === 'apagada' || ia.activa === false) { clase = 'apagado'; txt = 'IA APAGADA'; modelo = 'frases'; }
+        if (ia.estado === 'apagada' || ia.activa === false) { clase = 'apagado'; txt = 'IA APAGADA'; modelo = Idiomas.t('frases'); }
         else if (ia.estado === 'pensando') { clase = 'pensando'; txt = 'PENSANDO'; }
         else if (ia.estado === 'listo') { clase = 'ok'; txt = 'IA LOCAL'; }
         else if (ia.estado === 'iniciando') { clase = 'pensando'; txt = 'ENCENDIENDO'; }
@@ -323,7 +327,8 @@
       }
       PA.UI.interruptorIA({ disponible: modo === 'cerebro', activa: modo === 'cerebro' && ia.activa !== false && ia.estado !== 'apagada' });
       aplicarClima(false);
-      PA.UI.estado({ fase: (FASES.find((f) => h < f[0]) || FASES[0])[1], esNoche: noche > 0.5, claseCerebro: clase, textoCerebro: txt, modelo, poblacion: `${sis.lista.length} VECINOS · ${durm} DUERMEN · ${hablan} HABLAN` });
+      const T = Idiomas.t;
+      PA.UI.estado({ fase: T((FASES.find((f) => h < f[0]) || FASES[0])[1]), esNoche: noche > 0.5, claseCerebro: clase, textoCerebro: T(txt), modelo, poblacion: `${sis.lista.length} ${T('VECINOS')} · ${durm} ${T('DUERMEN')} · ${hablan} ${T('HABLAN')}` });
       PA.UI.nombres(cfg.nombres, sis.lista, sis.encima, seleccionado);
       if (seleccionado) refrescarFicha();
     } else if (sis.encima || seleccionado) PA.UI.nombres(cfg.nombres, sis.lista, sis.encima, seleccionado);
@@ -362,7 +367,7 @@
     const k = JSON.stringify(opcClima);
     if (avisarCerebro && k !== ultimaOpc && modo === 'cerebro') PA.Red.enviar({ t: 'clima', opc: opcClima });
     ultimaOpc = k;
-    for (const e of cal.eventos) if (eventosVistos.indexOf(e) < 0) PA.UI.aviso('EVENTO · ' + (PA.UI.NOMBRE_EVENTO[e] || e.toUpperCase()), TEXTO_EVENTO[e] || '', ICONO_EVENTO[e]);
+    for (const e of cal.eventos) if (eventosVistos.indexOf(e) < 0) PA.UI.aviso(Idiomas.t('EVENTO') + ' · ' + Idiomas.t(PA.UI.NOMBRE_EVENTO[e] || e.toUpperCase()), Idiomas.t(TEXTO_EVENTO[e] || ''), ICONO_EVENTO[e]);
     eventosVistos = cal.eventos.slice();
   }
 
@@ -370,6 +375,11 @@
     // las fuentes pixel se usan también dentro de las texturas del mundo (letreros)
     try { await Promise.race([Promise.all([document.fonts.load('22px "Silkscreen"'), document.fonts.load('bold 22px "Silkscreen"'), document.fonts.load('16px "Pixelify Sans"')]), new Promise((r) => setTimeout(r, 2500))]); } catch (e) { /* sin fuentes */ }
     const q = new URLSearchParams(location.search);
+    // el idioma va antes de construir nada: los letreros del mundo y las fichas salen de estos datos
+    for (const p of pendientes) if (p.idioma) propWE('idioma', p.idioma.value);
+    Idiomas.aplicar(Idiomas.elegir(q.get('idioma') || aj.idioma, navigator.language), SimCore, DP, DM);
+    DP.personajes = Idiomas.traducirLista(DP.personajes, DP);
+    document.documentElement.lang = Idiomas.actual;
     if (q.get('calidad')) cfg.calidad = parseFloat(q.get('calidad')) || 1;
     PA.Escena.iniciar(document.getElementById('escena'), DM, { calidad: cfg.calidad, sombras: cfg.sombras });
     mundo = PA.Mundo.construir(PA.Escena.escena, DM);
@@ -394,6 +404,7 @@
     PA.Red.conectar(cfg.puerto, mensajeCerebro, cambioConexion);
     setTimeout(() => { if (modo === 'arranque') iniciarLocal(); }, q.get('local') ? 0 : 1500);
     ratonar();
+    if (!leer('pueblo-bienvenida')) { guardar('pueblo-bienvenida', 1); setTimeout(() => PA.UI.aviso('PUEBLO AGÉNTICO', Idiomas.credito(), 'estrella'), 3000); }
     PA.Escena.actualizarCamara(0.016);
     mundo.orientarHalos(PA.Escena.camara);
     window.PUEBLO = { sis, get sim() { return sim; }, cfg, app, trafico, animales, mundo, opcClima, get cal() { return cal; }, get clima() { return climaFx; }, aplicarClima };

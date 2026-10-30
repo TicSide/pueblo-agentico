@@ -1,24 +1,68 @@
 {
 	"contentrating": "Everyone",
-	"description": "Archipiélago isométrico low-poly con vida propia: el pueblo central y trece islas temáticas (Tecnología, Cine, Festival, Bosque Mágico, Deportes, Barrio Residencial, Raccoon City, Playa del Sol, Mega Mall, Avenida de la Comida, Parque de Diversiones, Japón y Súper Parque) unidas por puentes. 191 personajes comen, duermen, trabajan, se saludan, se abrazan, discuten y charlan entre ellos con una IA local (Ollama). Incluye editor de personajes y buscador.",
+	"description": "A floating isometric voxel archipelago with a life of its own: a central town and 13 themed islands joined by bridges, where 191 characters eat, sleep, work and chat. In 8 languages. Optional local AI with the free companion app. Created by TicSide (github.com/TicSide/pueblo-agentico). © 2026, CC BY-NC-ND 4.0. Unofficial fan project: characters and brands belong to their owners.",
 	"file": "index.html",
 	"general": {
 		"properties": {
-			"schemecolor": {
+			"idioma": {
 				"order": 0,
-				"text": "Color de acento (para el tema «Color de Wallpaper Engine»)",
+				"text": "ui_idioma",
+				"type": "combo",
+				"options": [
+					{
+						"label": "ui_op_1",
+						"value": "auto"
+					},
+					{
+						"label": "Español",
+						"value": "es"
+					},
+					{
+						"label": "English",
+						"value": "en"
+					},
+					{
+						"label": "Português",
+						"value": "pt"
+					},
+					{
+						"label": "Français",
+						"value": "fr"
+					},
+					{
+						"label": "Deutsch",
+						"value": "de"
+					},
+					{
+						"label": "Русский",
+						"value": "ru"
+					},
+					{
+						"label": "简体中文",
+						"value": "zh"
+					},
+					{
+						"label": "日本語",
+						"value": "ja"
+					}
+				],
+				"value": "auto"
+			},
+			"schemecolor": {
+				"order": 1,
+				"text": "ui_schemecolor",
 				"type": "color",
 				"value": "0.85098 0.46667 0.34118"
 			},
 			"mensaje": {
-				"order": 1,
-				"text": "Hablarle al pueblo (ej.: Jane, ¿quién es Red John?)",
+				"order": 2,
+				"text": "ui_mensaje",
 				"type": "textinput",
 				"value": ""
 			},
 			"zoom": {
-				"order": 2,
-				"text": "Zoom",
+				"order": 3,
+				"text": "ui_zoom",
 				"type": "slider",
 				"min": 80,
 				"max": 400,
@@ -26,461 +70,1119 @@
 				"fraction": false
 			},
 			"camara": {
-				"order": 3,
-				"text": "Cámara",
+				"order": 4,
+				"text": "ui_camara",
 				"type": "combo",
 				"options": [
 					{
-						"label": "Mapa completo",
+						"label": "ui_op_2",
 						"value": "mapa"
 					},
 					{
-						"label": "Paseo automático (sigue las charlas)",
+						"label": "ui_op_3",
 						"value": "paseo"
 					}
 				],
 				"value": "mapa"
 			},
 			"ciclo": {
-				"order": 4,
-				"text": "Luz del día",
+				"order": 5,
+				"text": "ui_ciclo",
 				"type": "combo",
 				"options": [
 					{
-						"label": "Hora real",
+						"label": "ui_op_4",
 						"value": "real"
 					},
 					{
-						"label": "Siempre de día",
+						"label": "ui_op_5",
 						"value": "dia"
 					},
 					{
-						"label": "Siempre atardecer",
+						"label": "ui_op_6",
 						"value": "tarde"
 					},
 					{
-						"label": "Siempre de noche",
+						"label": "ui_op_7",
 						"value": "noche"
 					}
 				],
 				"value": "real"
 			},
 			"nombres": {
-				"order": 5,
-				"text": "Mostrar nombres siempre",
+				"order": 6,
+				"text": "ui_nombres",
 				"type": "bool",
 				"value": false
 			},
 			"registro": {
-				"order": 6,
-				"text": "Mostrar registro de charlas",
+				"order": 7,
+				"text": "ui_registro",
 				"type": "bool",
 				"value": true
 			},
 			"estado": {
-				"order": 7,
-				"text": "Mostrar reloj y estado",
+				"order": 8,
+				"text": "ui_estado",
 				"type": "bool",
 				"value": true
 			},
 			"sombras": {
-				"order": 8,
-				"text": "Sombras",
+				"order": 9,
+				"text": "ui_sombras",
 				"type": "bool",
 				"value": true
 			},
 			"luces": {
-				"order": 9,
-				"text": "Luces de noche",
+				"order": 10,
+				"text": "ui_luces",
 				"type": "bool",
 				"value": true
 			},
 			"calidad": {
-				"order": 10,
-				"text": "Calidad",
+				"order": 11,
+				"text": "ui_calidad",
 				"type": "combo",
 				"options": [
 					{
-						"label": "Alta",
+						"label": "ui_op_8",
 						"value": "1"
 					},
 					{
-						"label": "Media",
+						"label": "ui_op_9",
 						"value": "0.75"
 					},
 					{
-						"label": "Baja",
+						"label": "ui_op_10",
 						"value": "0.5"
 					}
 				],
 				"value": "1"
 			},
 			"puerto": {
-				"order": 11,
-				"text": "Puerto del cerebro local",
+				"order": 12,
+				"text": "ui_puerto",
 				"type": "textinput",
 				"value": "8787"
 			},
 			"clima": {
-				"order": 12,
-				"text": "Clima",
+				"order": 13,
+				"text": "ui_clima",
 				"type": "combo",
 				"options": [
 					{
-						"label": "Automático (cambia solo)",
+						"label": "ui_op_11",
 						"value": "auto"
 					},
 					{
-						"label": "Despejado",
+						"label": "ui_op_12",
 						"value": "despejado"
 					},
 					{
-						"label": "Nublado",
+						"label": "ui_op_13",
 						"value": "nublado"
 					},
 					{
-						"label": "Lluvia",
+						"label": "ui_op_14",
 						"value": "lluvia"
 					},
 					{
-						"label": "Tormenta",
+						"label": "ui_op_15",
 						"value": "tormenta"
 					},
 					{
-						"label": "Nieve",
+						"label": "ui_op_16",
 						"value": "nieve"
 					},
 					{
-						"label": "Niebla",
+						"label": "ui_op_17",
 						"value": "niebla"
 					}
 				],
 				"value": "auto"
 			},
 			"estacion": {
-				"order": 13,
-				"text": "Estación",
+				"order": 14,
+				"text": "ui_estacion",
 				"type": "combo",
 				"options": [
 					{
-						"label": "Automática (hemisferio norte)",
+						"label": "ui_op_18",
 						"value": "auto"
 					},
 					{
-						"label": "Automática (hemisferio sur)",
+						"label": "ui_op_19",
 						"value": "auto_sur"
 					},
 					{
-						"label": "Primavera",
+						"label": "ui_op_20",
 						"value": "primavera"
 					},
 					{
-						"label": "Verano",
+						"label": "ui_op_21",
 						"value": "verano"
 					},
 					{
-						"label": "Otoño",
+						"label": "ui_op_22",
 						"value": "otono"
 					},
 					{
-						"label": "Invierno",
+						"label": "ui_op_23",
 						"value": "invierno"
 					}
 				],
 				"value": "auto"
 			},
 			"eventos": {
-				"order": 14,
-				"text": "Eventos",
+				"order": 15,
+				"text": "ui_eventos",
 				"type": "combo",
 				"options": [
 					{
-						"label": "Automáticos (según la fecha)",
+						"label": "ui_op_24",
 						"value": "auto"
 					},
 					{
-						"label": "Sin eventos",
+						"label": "ui_op_25",
 						"value": "no"
 					},
 					{
-						"label": "Forzar Halloween",
+						"label": "ui_op_26",
 						"value": "halloween"
 					},
 					{
-						"label": "Forzar Navidad",
+						"label": "ui_op_27",
 						"value": "navidad"
 					},
 					{
-						"label": "Forzar Año Nuevo",
+						"label": "ui_op_28",
 						"value": "anio_nuevo"
 					},
 					{
-						"label": "Forzar concierto",
+						"label": "ui_op_29",
 						"value": "concierto"
 					},
 					{
-						"label": "Forzar noche de cine",
+						"label": "ui_op_30",
 						"value": "cine"
 					},
 					{
-						"label": "Forzar Red John",
+						"label": "ui_op_31",
 						"value": "red_john"
 					},
 					{
-						"label": "Forzar estrellas fugaces",
+						"label": "ui_op_32",
 						"value": "estrellas_fugaces"
 					},
 					{
-						"label": "Forzar San Valentín",
+						"label": "ui_op_33",
 						"value": "san_valentin"
 					}
 				],
 				"value": "auto"
 			},
 			"tema": {
-				"text": "Interfaz: tema",
+				"text": "ui_tema",
 				"type": "combo",
 				"options": [
 					{
-						"label": "Madera (RPG)",
+						"label": "ui_op_34",
 						"value": "madera"
 					},
 					{
-						"label": "Noche",
+						"label": "ui_op_35",
 						"value": "noche"
 					},
 					{
-						"label": "Pergamino claro",
+						"label": "ui_op_36",
 						"value": "pergamino"
 					},
 					{
-						"label": "Neón",
+						"label": "ui_op_37",
 						"value": "neon"
 					},
 					{
-						"label": "Cristal transparente",
+						"label": "ui_op_38",
 						"value": "cristal"
 					},
 					{
-						"label": "Color de Wallpaper Engine",
+						"label": "ui_op_39",
 						"value": "acento"
 					}
 				],
 				"value": "madera",
-				"order": 15
+				"order": 16
 			},
 			"escala": {
-				"text": "Interfaz: tamaño (%)",
+				"text": "ui_escala",
 				"type": "slider",
 				"min": 60,
 				"max": 160,
 				"value": 100,
 				"fraction": false,
-				"order": 16
+				"order": 17
 			},
 			"opacidad": {
-				"text": "Interfaz: opacidad (%)",
+				"text": "ui_opacidad",
 				"type": "slider",
 				"min": 30,
 				"max": 100,
 				"value": 100,
 				"fraction": false,
-				"order": 17
+				"order": 18
 			},
 			"pos_estado": {
-				"text": "Interfaz: esquina del reloj y el clima",
+				"text": "ui_pos_estado",
 				"type": "combo",
 				"options": [
 					{
-						"label": "Arriba a la derecha",
+						"label": "ui_op_40",
 						"value": "ar-der"
 					},
 					{
-						"label": "Arriba a la izquierda",
+						"label": "ui_op_41",
 						"value": "ar-izq"
 					},
 					{
-						"label": "Abajo a la derecha",
+						"label": "ui_op_42",
 						"value": "ab-der"
 					},
 					{
-						"label": "Abajo a la izquierda",
+						"label": "ui_op_43",
 						"value": "ab-izq"
 					},
 					{
-						"label": "Oculto",
+						"label": "ui_op_44",
 						"value": "oculto"
 					}
 				],
 				"value": "ar-der",
-				"order": 18
+				"order": 19
 			},
 			"pos_diario": {
-				"text": "Interfaz: esquina del diario",
+				"text": "ui_pos_diario",
 				"type": "combo",
 				"options": [
 					{
-						"label": "Arriba a la derecha",
+						"label": "ui_op_40",
 						"value": "ar-der"
 					},
 					{
-						"label": "Arriba a la izquierda",
+						"label": "ui_op_41",
 						"value": "ar-izq"
 					},
 					{
-						"label": "Abajo a la derecha",
+						"label": "ui_op_42",
 						"value": "ab-der"
 					},
 					{
-						"label": "Abajo a la izquierda",
+						"label": "ui_op_43",
 						"value": "ab-izq"
 					},
 					{
-						"label": "Oculto",
+						"label": "ui_op_44",
 						"value": "oculto"
 					}
 				],
 				"value": "ab-der",
-				"order": 19
+				"order": 20
 			},
 			"pos_mapa": {
-				"text": "Interfaz: esquina de los botones de islas",
+				"text": "ui_pos_mapa",
 				"type": "combo",
 				"options": [
 					{
-						"label": "Arriba a la derecha",
+						"label": "ui_op_40",
 						"value": "ar-der"
 					},
 					{
-						"label": "Arriba a la izquierda",
+						"label": "ui_op_41",
 						"value": "ar-izq"
 					},
 					{
-						"label": "Abajo a la derecha",
+						"label": "ui_op_42",
 						"value": "ab-der"
 					},
 					{
-						"label": "Abajo a la izquierda",
+						"label": "ui_op_43",
 						"value": "ab-izq"
 					},
 					{
-						"label": "Oculto",
+						"label": "ui_op_44",
 						"value": "oculto"
 					}
 				],
 				"value": "ab-izq",
-				"order": 20
+				"order": 21
 			},
 			"pos_botones": {
-				"text": "Interfaz: esquina de ajustes y ayuda",
+				"text": "ui_pos_botones",
 				"type": "combo",
 				"options": [
 					{
-						"label": "Arriba a la derecha",
+						"label": "ui_op_40",
 						"value": "ar-der"
 					},
 					{
-						"label": "Arriba a la izquierda",
+						"label": "ui_op_41",
 						"value": "ar-izq"
 					},
 					{
-						"label": "Abajo a la derecha",
+						"label": "ui_op_42",
 						"value": "ab-der"
 					},
 					{
-						"label": "Abajo a la izquierda",
+						"label": "ui_op_43",
 						"value": "ab-izq"
 					}
 				],
 				"value": "ab-der",
-				"order": 21
+				"order": 22
 			},
 			"lineas": {
-				"text": "Interfaz: líneas del diario",
+				"text": "ui_lineas",
 				"type": "slider",
 				"min": 2,
 				"max": 12,
 				"value": 7,
 				"fraction": false,
-				"order": 22
-			},
-			"h12": {
-				"text": "Interfaz: hora en formato de 12 horas",
-				"type": "bool",
-				"value": false,
 				"order": 23
 			},
-			"avisos": {
-				"text": "Interfaz: avisos de eventos (Halloween, conciertos...)",
+			"h12": {
+				"text": "ui_h12",
 				"type": "bool",
-				"value": true,
+				"value": false,
 				"order": 24
 			},
+			"avisos": {
+				"text": "ui_avisos",
+				"type": "bool",
+				"value": true,
+				"order": 25
+			},
 			"globos": {
-				"text": "Globos de diálogo",
+				"text": "ui_globos",
 				"type": "combo",
 				"options": [
 					{
-						"label": "Todos",
+						"label": "ui_op_59",
 						"value": "todos"
 					},
 					{
-						"label": "Solo al acercar la cámara",
+						"label": "ui_op_60",
 						"value": "cerca"
 					},
 					{
-						"label": "Solo el personaje elegido",
+						"label": "ui_op_61",
 						"value": "elegido"
 					},
 					{
-						"label": "Ninguno (solo el diario)",
+						"label": "ui_op_62",
 						"value": "ninguno"
 					}
 				],
 				"value": "todos",
-				"order": 25
+				"order": 26
 			},
 			"max_globos": {
-				"text": "Globos: máximo a la vez",
+				"text": "ui_max_globos",
 				"type": "slider",
 				"min": 1,
 				"max": 20,
 				"value": 8,
 				"fraction": false,
-				"order": 26
+				"order": 27
 			},
 			"escala_globos": {
-				"text": "Globos: tamaño (%)",
+				"text": "ui_escala_globos",
 				"type": "slider",
 				"min": 60,
 				"max": 160,
 				"value": 100,
 				"fraction": false,
-				"order": 27
+				"order": 28
 			},
 			"trafico": {
-				"text": "Mundo: cantidad de autos (%)",
+				"text": "ui_trafico",
 				"type": "slider",
 				"min": 0,
 				"max": 100,
 				"value": 100,
 				"fraction": false,
-				"order": 28
+				"order": 29
 			},
 			"particulas": {
-				"text": "Mundo: intensidad de lluvia y nieve (%)",
+				"text": "ui_particulas",
 				"type": "slider",
 				"min": 0,
 				"max": 150,
 				"value": 100,
 				"fraction": false,
-				"order": 29
+				"order": 30
 			},
 			"animales": {
-				"text": "Mundo: animales",
+				"text": "ui_animales",
 				"type": "bool",
 				"value": true,
-				"order": 30
+				"order": 31
+			}
+		},
+		"localization": {
+			"en-us": {
+				"ui_idioma": "Language",
+				"ui_op_1": "Automatic (system language)",
+				"ui_schemecolor": "Accent color (for the \"Wallpaper Engine color\" theme)",
+				"ui_mensaje": "Talk to the town (needs the free app. Example: Jane, who is Red John?)",
+				"ui_zoom": "Zoom",
+				"ui_camara": "Camera",
+				"ui_op_2": "Full map",
+				"ui_op_3": "Auto tour (follows the chats)",
+				"ui_ciclo": "Daylight",
+				"ui_op_4": "Real time",
+				"ui_op_5": "Always day",
+				"ui_op_6": "Always sunset",
+				"ui_op_7": "Always night",
+				"ui_nombres": "Always show names",
+				"ui_registro": "Show the chat diary",
+				"ui_estado": "Show clock and status",
+				"ui_sombras": "Shadows",
+				"ui_luces": "Night lights",
+				"ui_calidad": "Quality",
+				"ui_op_8": "High",
+				"ui_op_9": "Medium",
+				"ui_op_10": "Low",
+				"ui_puerto": "Companion app port",
+				"ui_clima": "Weather",
+				"ui_op_11": "Automatic (changes by itself)",
+				"ui_op_12": "Clear",
+				"ui_op_13": "Cloudy",
+				"ui_op_14": "Rain",
+				"ui_op_15": "Storm",
+				"ui_op_16": "Snow",
+				"ui_op_17": "Fog",
+				"ui_estacion": "Season",
+				"ui_op_18": "Automatic (northern hemisphere)",
+				"ui_op_19": "Automatic (southern hemisphere)",
+				"ui_op_20": "Spring",
+				"ui_op_21": "Summer",
+				"ui_op_22": "Autumn",
+				"ui_op_23": "Winter",
+				"ui_eventos": "Events",
+				"ui_op_24": "Automatic (by date)",
+				"ui_op_25": "No events",
+				"ui_op_26": "Force Halloween",
+				"ui_op_27": "Force Christmas",
+				"ui_op_28": "Force New Year",
+				"ui_op_29": "Force concert",
+				"ui_op_30": "Force movie night",
+				"ui_op_31": "Force Red John",
+				"ui_op_32": "Force shooting stars",
+				"ui_op_33": "Force Valentine's Day",
+				"ui_tema": "Interface: theme",
+				"ui_op_34": "Wood (RPG)",
+				"ui_op_35": "Night",
+				"ui_op_36": "Light parchment",
+				"ui_op_37": "Neon",
+				"ui_op_38": "Clear glass",
+				"ui_op_39": "Wallpaper Engine color",
+				"ui_escala": "Interface: size (%)",
+				"ui_opacidad": "Interface: opacity (%)",
+				"ui_pos_estado": "Interface: clock and weather corner",
+				"ui_op_40": "Top right",
+				"ui_op_41": "Top left",
+				"ui_op_42": "Bottom right",
+				"ui_op_43": "Bottom left",
+				"ui_op_44": "Hidden",
+				"ui_pos_diario": "Interface: diary corner",
+				"ui_pos_mapa": "Interface: island buttons corner",
+				"ui_pos_botones": "Interface: settings and help corner",
+				"ui_lineas": "Interface: diary lines",
+				"ui_h12": "Interface: 12-hour clock",
+				"ui_avisos": "Interface: event notices (Halloween, concerts...)",
+				"ui_globos": "Speech bubbles",
+				"ui_op_59": "All",
+				"ui_op_60": "Only when zoomed in",
+				"ui_op_61": "Only the selected character",
+				"ui_op_62": "None (diary only)",
+				"ui_max_globos": "Bubbles: maximum at once",
+				"ui_escala_globos": "Bubbles: size (%)",
+				"ui_trafico": "World: amount of cars (%)",
+				"ui_particulas": "World: rain and snow intensity (%)",
+				"ui_animales": "World: animals"
+			},
+			"es-es": {
+				"ui_idioma": "Idioma",
+				"ui_op_1": "Automático (idioma del sistema)",
+				"ui_schemecolor": "Color de acento (para el tema «Color de Wallpaper Engine»)",
+				"ui_mensaje": "Hablarle al pueblo (ej.: Jane, ¿quién es Red John?)",
+				"ui_zoom": "Zoom",
+				"ui_camara": "Cámara",
+				"ui_op_2": "Mapa completo",
+				"ui_op_3": "Paseo automático (sigue las charlas)",
+				"ui_ciclo": "Luz del día",
+				"ui_op_4": "Hora real",
+				"ui_op_5": "Siempre de día",
+				"ui_op_6": "Siempre atardecer",
+				"ui_op_7": "Siempre de noche",
+				"ui_nombres": "Mostrar nombres siempre",
+				"ui_registro": "Mostrar registro de charlas",
+				"ui_estado": "Mostrar reloj y estado",
+				"ui_sombras": "Sombras",
+				"ui_luces": "Luces de noche",
+				"ui_calidad": "Calidad",
+				"ui_op_8": "Alta",
+				"ui_op_9": "Media",
+				"ui_op_10": "Baja",
+				"ui_puerto": "Puerto del cerebro local",
+				"ui_clima": "Clima",
+				"ui_op_11": "Automático (cambia solo)",
+				"ui_op_12": "Despejado",
+				"ui_op_13": "Nublado",
+				"ui_op_14": "Lluvia",
+				"ui_op_15": "Tormenta",
+				"ui_op_16": "Nieve",
+				"ui_op_17": "Niebla",
+				"ui_estacion": "Estación",
+				"ui_op_18": "Automática (hemisferio norte)",
+				"ui_op_19": "Automática (hemisferio sur)",
+				"ui_op_20": "Primavera",
+				"ui_op_21": "Verano",
+				"ui_op_22": "Otoño",
+				"ui_op_23": "Invierno",
+				"ui_eventos": "Eventos",
+				"ui_op_24": "Automáticos (según la fecha)",
+				"ui_op_25": "Sin eventos",
+				"ui_op_26": "Forzar Halloween",
+				"ui_op_27": "Forzar Navidad",
+				"ui_op_28": "Forzar Año Nuevo",
+				"ui_op_29": "Forzar concierto",
+				"ui_op_30": "Forzar noche de cine",
+				"ui_op_31": "Forzar Red John",
+				"ui_op_32": "Forzar estrellas fugaces",
+				"ui_op_33": "Forzar San Valentín",
+				"ui_tema": "Interfaz: tema",
+				"ui_op_34": "Madera (RPG)",
+				"ui_op_35": "Noche",
+				"ui_op_36": "Pergamino claro",
+				"ui_op_37": "Neón",
+				"ui_op_38": "Cristal transparente",
+				"ui_op_39": "Color de Wallpaper Engine",
+				"ui_escala": "Interfaz: tamaño (%)",
+				"ui_opacidad": "Interfaz: opacidad (%)",
+				"ui_pos_estado": "Interfaz: esquina del reloj y el clima",
+				"ui_op_40": "Arriba a la derecha",
+				"ui_op_41": "Arriba a la izquierda",
+				"ui_op_42": "Abajo a la derecha",
+				"ui_op_43": "Abajo a la izquierda",
+				"ui_op_44": "Oculto",
+				"ui_pos_diario": "Interfaz: esquina del diario",
+				"ui_pos_mapa": "Interfaz: esquina de los botones de islas",
+				"ui_pos_botones": "Interfaz: esquina de ajustes y ayuda",
+				"ui_lineas": "Interfaz: líneas del diario",
+				"ui_h12": "Interfaz: hora en formato de 12 horas",
+				"ui_avisos": "Interfaz: avisos de eventos (Halloween, conciertos...)",
+				"ui_globos": "Globos de diálogo",
+				"ui_op_59": "Todos",
+				"ui_op_60": "Solo al acercar la cámara",
+				"ui_op_61": "Solo el personaje elegido",
+				"ui_op_62": "Ninguno (solo el diario)",
+				"ui_max_globos": "Globos: máximo a la vez",
+				"ui_escala_globos": "Globos: tamaño (%)",
+				"ui_trafico": "Mundo: cantidad de autos (%)",
+				"ui_particulas": "Mundo: intensidad de lluvia y nieve (%)",
+				"ui_animales": "Mundo: animales"
+			},
+			"pt-br": {
+				"ui_idioma": "Language",
+				"ui_op_1": "Automatic (system language)",
+				"ui_schemecolor": "Accent color (for the \"Wallpaper Engine color\" theme)",
+				"ui_mensaje": "Talk to the town (needs the free app. Example: Jane, who is Red John?)",
+				"ui_zoom": "Zoom",
+				"ui_camara": "Camera",
+				"ui_op_2": "Full map",
+				"ui_op_3": "Auto tour (follows the chats)",
+				"ui_ciclo": "Daylight",
+				"ui_op_4": "Real time",
+				"ui_op_5": "Always day",
+				"ui_op_6": "Always sunset",
+				"ui_op_7": "Always night",
+				"ui_nombres": "Always show names",
+				"ui_registro": "Show the chat diary",
+				"ui_estado": "Show clock and status",
+				"ui_sombras": "Shadows",
+				"ui_luces": "Night lights",
+				"ui_calidad": "Quality",
+				"ui_op_8": "High",
+				"ui_op_9": "Medium",
+				"ui_op_10": "Low",
+				"ui_puerto": "Companion app port",
+				"ui_clima": "Weather",
+				"ui_op_11": "Automatic (changes by itself)",
+				"ui_op_12": "Clear",
+				"ui_op_13": "Cloudy",
+				"ui_op_14": "Rain",
+				"ui_op_15": "Storm",
+				"ui_op_16": "Snow",
+				"ui_op_17": "Fog",
+				"ui_estacion": "Season",
+				"ui_op_18": "Automatic (northern hemisphere)",
+				"ui_op_19": "Automatic (southern hemisphere)",
+				"ui_op_20": "Spring",
+				"ui_op_21": "Summer",
+				"ui_op_22": "Autumn",
+				"ui_op_23": "Winter",
+				"ui_eventos": "Events",
+				"ui_op_24": "Automatic (by date)",
+				"ui_op_25": "No events",
+				"ui_op_26": "Force Halloween",
+				"ui_op_27": "Force Christmas",
+				"ui_op_28": "Force New Year",
+				"ui_op_29": "Force concert",
+				"ui_op_30": "Force movie night",
+				"ui_op_31": "Force Red John",
+				"ui_op_32": "Force shooting stars",
+				"ui_op_33": "Force Valentine's Day",
+				"ui_tema": "Interface: theme",
+				"ui_op_34": "Wood (RPG)",
+				"ui_op_35": "Night",
+				"ui_op_36": "Light parchment",
+				"ui_op_37": "Neon",
+				"ui_op_38": "Clear glass",
+				"ui_op_39": "Wallpaper Engine color",
+				"ui_escala": "Interface: size (%)",
+				"ui_opacidad": "Interface: opacity (%)",
+				"ui_pos_estado": "Interface: clock and weather corner",
+				"ui_op_40": "Top right",
+				"ui_op_41": "Top left",
+				"ui_op_42": "Bottom right",
+				"ui_op_43": "Bottom left",
+				"ui_op_44": "Hidden",
+				"ui_pos_diario": "Interface: diary corner",
+				"ui_pos_mapa": "Interface: island buttons corner",
+				"ui_pos_botones": "Interface: settings and help corner",
+				"ui_lineas": "Interface: diary lines",
+				"ui_h12": "Interface: 12-hour clock",
+				"ui_avisos": "Interface: event notices (Halloween, concerts...)",
+				"ui_globos": "Speech bubbles",
+				"ui_op_59": "All",
+				"ui_op_60": "Only when zoomed in",
+				"ui_op_61": "Only the selected character",
+				"ui_op_62": "None (diary only)",
+				"ui_max_globos": "Bubbles: maximum at once",
+				"ui_escala_globos": "Bubbles: size (%)",
+				"ui_trafico": "World: amount of cars (%)",
+				"ui_particulas": "World: rain and snow intensity (%)",
+				"ui_animales": "World: animals"
+			},
+			"fr-fr": {
+				"ui_idioma": "Language",
+				"ui_op_1": "Automatic (system language)",
+				"ui_schemecolor": "Accent color (for the \"Wallpaper Engine color\" theme)",
+				"ui_mensaje": "Talk to the town (needs the free app. Example: Jane, who is Red John?)",
+				"ui_zoom": "Zoom",
+				"ui_camara": "Camera",
+				"ui_op_2": "Full map",
+				"ui_op_3": "Auto tour (follows the chats)",
+				"ui_ciclo": "Daylight",
+				"ui_op_4": "Real time",
+				"ui_op_5": "Always day",
+				"ui_op_6": "Always sunset",
+				"ui_op_7": "Always night",
+				"ui_nombres": "Always show names",
+				"ui_registro": "Show the chat diary",
+				"ui_estado": "Show clock and status",
+				"ui_sombras": "Shadows",
+				"ui_luces": "Night lights",
+				"ui_calidad": "Quality",
+				"ui_op_8": "High",
+				"ui_op_9": "Medium",
+				"ui_op_10": "Low",
+				"ui_puerto": "Companion app port",
+				"ui_clima": "Weather",
+				"ui_op_11": "Automatic (changes by itself)",
+				"ui_op_12": "Clear",
+				"ui_op_13": "Cloudy",
+				"ui_op_14": "Rain",
+				"ui_op_15": "Storm",
+				"ui_op_16": "Snow",
+				"ui_op_17": "Fog",
+				"ui_estacion": "Season",
+				"ui_op_18": "Automatic (northern hemisphere)",
+				"ui_op_19": "Automatic (southern hemisphere)",
+				"ui_op_20": "Spring",
+				"ui_op_21": "Summer",
+				"ui_op_22": "Autumn",
+				"ui_op_23": "Winter",
+				"ui_eventos": "Events",
+				"ui_op_24": "Automatic (by date)",
+				"ui_op_25": "No events",
+				"ui_op_26": "Force Halloween",
+				"ui_op_27": "Force Christmas",
+				"ui_op_28": "Force New Year",
+				"ui_op_29": "Force concert",
+				"ui_op_30": "Force movie night",
+				"ui_op_31": "Force Red John",
+				"ui_op_32": "Force shooting stars",
+				"ui_op_33": "Force Valentine's Day",
+				"ui_tema": "Interface: theme",
+				"ui_op_34": "Wood (RPG)",
+				"ui_op_35": "Night",
+				"ui_op_36": "Light parchment",
+				"ui_op_37": "Neon",
+				"ui_op_38": "Clear glass",
+				"ui_op_39": "Wallpaper Engine color",
+				"ui_escala": "Interface: size (%)",
+				"ui_opacidad": "Interface: opacity (%)",
+				"ui_pos_estado": "Interface: clock and weather corner",
+				"ui_op_40": "Top right",
+				"ui_op_41": "Top left",
+				"ui_op_42": "Bottom right",
+				"ui_op_43": "Bottom left",
+				"ui_op_44": "Hidden",
+				"ui_pos_diario": "Interface: diary corner",
+				"ui_pos_mapa": "Interface: island buttons corner",
+				"ui_pos_botones": "Interface: settings and help corner",
+				"ui_lineas": "Interface: diary lines",
+				"ui_h12": "Interface: 12-hour clock",
+				"ui_avisos": "Interface: event notices (Halloween, concerts...)",
+				"ui_globos": "Speech bubbles",
+				"ui_op_59": "All",
+				"ui_op_60": "Only when zoomed in",
+				"ui_op_61": "Only the selected character",
+				"ui_op_62": "None (diary only)",
+				"ui_max_globos": "Bubbles: maximum at once",
+				"ui_escala_globos": "Bubbles: size (%)",
+				"ui_trafico": "World: amount of cars (%)",
+				"ui_particulas": "World: rain and snow intensity (%)",
+				"ui_animales": "World: animals"
+			},
+			"de-de": {
+				"ui_idioma": "Language",
+				"ui_op_1": "Automatic (system language)",
+				"ui_schemecolor": "Accent color (for the \"Wallpaper Engine color\" theme)",
+				"ui_mensaje": "Talk to the town (needs the free app. Example: Jane, who is Red John?)",
+				"ui_zoom": "Zoom",
+				"ui_camara": "Camera",
+				"ui_op_2": "Full map",
+				"ui_op_3": "Auto tour (follows the chats)",
+				"ui_ciclo": "Daylight",
+				"ui_op_4": "Real time",
+				"ui_op_5": "Always day",
+				"ui_op_6": "Always sunset",
+				"ui_op_7": "Always night",
+				"ui_nombres": "Always show names",
+				"ui_registro": "Show the chat diary",
+				"ui_estado": "Show clock and status",
+				"ui_sombras": "Shadows",
+				"ui_luces": "Night lights",
+				"ui_calidad": "Quality",
+				"ui_op_8": "High",
+				"ui_op_9": "Medium",
+				"ui_op_10": "Low",
+				"ui_puerto": "Companion app port",
+				"ui_clima": "Weather",
+				"ui_op_11": "Automatic (changes by itself)",
+				"ui_op_12": "Clear",
+				"ui_op_13": "Cloudy",
+				"ui_op_14": "Rain",
+				"ui_op_15": "Storm",
+				"ui_op_16": "Snow",
+				"ui_op_17": "Fog",
+				"ui_estacion": "Season",
+				"ui_op_18": "Automatic (northern hemisphere)",
+				"ui_op_19": "Automatic (southern hemisphere)",
+				"ui_op_20": "Spring",
+				"ui_op_21": "Summer",
+				"ui_op_22": "Autumn",
+				"ui_op_23": "Winter",
+				"ui_eventos": "Events",
+				"ui_op_24": "Automatic (by date)",
+				"ui_op_25": "No events",
+				"ui_op_26": "Force Halloween",
+				"ui_op_27": "Force Christmas",
+				"ui_op_28": "Force New Year",
+				"ui_op_29": "Force concert",
+				"ui_op_30": "Force movie night",
+				"ui_op_31": "Force Red John",
+				"ui_op_32": "Force shooting stars",
+				"ui_op_33": "Force Valentine's Day",
+				"ui_tema": "Interface: theme",
+				"ui_op_34": "Wood (RPG)",
+				"ui_op_35": "Night",
+				"ui_op_36": "Light parchment",
+				"ui_op_37": "Neon",
+				"ui_op_38": "Clear glass",
+				"ui_op_39": "Wallpaper Engine color",
+				"ui_escala": "Interface: size (%)",
+				"ui_opacidad": "Interface: opacity (%)",
+				"ui_pos_estado": "Interface: clock and weather corner",
+				"ui_op_40": "Top right",
+				"ui_op_41": "Top left",
+				"ui_op_42": "Bottom right",
+				"ui_op_43": "Bottom left",
+				"ui_op_44": "Hidden",
+				"ui_pos_diario": "Interface: diary corner",
+				"ui_pos_mapa": "Interface: island buttons corner",
+				"ui_pos_botones": "Interface: settings and help corner",
+				"ui_lineas": "Interface: diary lines",
+				"ui_h12": "Interface: 12-hour clock",
+				"ui_avisos": "Interface: event notices (Halloween, concerts...)",
+				"ui_globos": "Speech bubbles",
+				"ui_op_59": "All",
+				"ui_op_60": "Only when zoomed in",
+				"ui_op_61": "Only the selected character",
+				"ui_op_62": "None (diary only)",
+				"ui_max_globos": "Bubbles: maximum at once",
+				"ui_escala_globos": "Bubbles: size (%)",
+				"ui_trafico": "World: amount of cars (%)",
+				"ui_particulas": "World: rain and snow intensity (%)",
+				"ui_animales": "World: animals"
+			},
+			"ru-ru": {
+				"ui_idioma": "Language",
+				"ui_op_1": "Automatic (system language)",
+				"ui_schemecolor": "Accent color (for the \"Wallpaper Engine color\" theme)",
+				"ui_mensaje": "Talk to the town (needs the free app. Example: Jane, who is Red John?)",
+				"ui_zoom": "Zoom",
+				"ui_camara": "Camera",
+				"ui_op_2": "Full map",
+				"ui_op_3": "Auto tour (follows the chats)",
+				"ui_ciclo": "Daylight",
+				"ui_op_4": "Real time",
+				"ui_op_5": "Always day",
+				"ui_op_6": "Always sunset",
+				"ui_op_7": "Always night",
+				"ui_nombres": "Always show names",
+				"ui_registro": "Show the chat diary",
+				"ui_estado": "Show clock and status",
+				"ui_sombras": "Shadows",
+				"ui_luces": "Night lights",
+				"ui_calidad": "Quality",
+				"ui_op_8": "High",
+				"ui_op_9": "Medium",
+				"ui_op_10": "Low",
+				"ui_puerto": "Companion app port",
+				"ui_clima": "Weather",
+				"ui_op_11": "Automatic (changes by itself)",
+				"ui_op_12": "Clear",
+				"ui_op_13": "Cloudy",
+				"ui_op_14": "Rain",
+				"ui_op_15": "Storm",
+				"ui_op_16": "Snow",
+				"ui_op_17": "Fog",
+				"ui_estacion": "Season",
+				"ui_op_18": "Automatic (northern hemisphere)",
+				"ui_op_19": "Automatic (southern hemisphere)",
+				"ui_op_20": "Spring",
+				"ui_op_21": "Summer",
+				"ui_op_22": "Autumn",
+				"ui_op_23": "Winter",
+				"ui_eventos": "Events",
+				"ui_op_24": "Automatic (by date)",
+				"ui_op_25": "No events",
+				"ui_op_26": "Force Halloween",
+				"ui_op_27": "Force Christmas",
+				"ui_op_28": "Force New Year",
+				"ui_op_29": "Force concert",
+				"ui_op_30": "Force movie night",
+				"ui_op_31": "Force Red John",
+				"ui_op_32": "Force shooting stars",
+				"ui_op_33": "Force Valentine's Day",
+				"ui_tema": "Interface: theme",
+				"ui_op_34": "Wood (RPG)",
+				"ui_op_35": "Night",
+				"ui_op_36": "Light parchment",
+				"ui_op_37": "Neon",
+				"ui_op_38": "Clear glass",
+				"ui_op_39": "Wallpaper Engine color",
+				"ui_escala": "Interface: size (%)",
+				"ui_opacidad": "Interface: opacity (%)",
+				"ui_pos_estado": "Interface: clock and weather corner",
+				"ui_op_40": "Top right",
+				"ui_op_41": "Top left",
+				"ui_op_42": "Bottom right",
+				"ui_op_43": "Bottom left",
+				"ui_op_44": "Hidden",
+				"ui_pos_diario": "Interface: diary corner",
+				"ui_pos_mapa": "Interface: island buttons corner",
+				"ui_pos_botones": "Interface: settings and help corner",
+				"ui_lineas": "Interface: diary lines",
+				"ui_h12": "Interface: 12-hour clock",
+				"ui_avisos": "Interface: event notices (Halloween, concerts...)",
+				"ui_globos": "Speech bubbles",
+				"ui_op_59": "All",
+				"ui_op_60": "Only when zoomed in",
+				"ui_op_61": "Only the selected character",
+				"ui_op_62": "None (diary only)",
+				"ui_max_globos": "Bubbles: maximum at once",
+				"ui_escala_globos": "Bubbles: size (%)",
+				"ui_trafico": "World: amount of cars (%)",
+				"ui_particulas": "World: rain and snow intensity (%)",
+				"ui_animales": "World: animals"
+			},
+			"zh-chs": {
+				"ui_idioma": "Language",
+				"ui_op_1": "Automatic (system language)",
+				"ui_schemecolor": "Accent color (for the \"Wallpaper Engine color\" theme)",
+				"ui_mensaje": "Talk to the town (needs the free app. Example: Jane, who is Red John?)",
+				"ui_zoom": "Zoom",
+				"ui_camara": "Camera",
+				"ui_op_2": "Full map",
+				"ui_op_3": "Auto tour (follows the chats)",
+				"ui_ciclo": "Daylight",
+				"ui_op_4": "Real time",
+				"ui_op_5": "Always day",
+				"ui_op_6": "Always sunset",
+				"ui_op_7": "Always night",
+				"ui_nombres": "Always show names",
+				"ui_registro": "Show the chat diary",
+				"ui_estado": "Show clock and status",
+				"ui_sombras": "Shadows",
+				"ui_luces": "Night lights",
+				"ui_calidad": "Quality",
+				"ui_op_8": "High",
+				"ui_op_9": "Medium",
+				"ui_op_10": "Low",
+				"ui_puerto": "Companion app port",
+				"ui_clima": "Weather",
+				"ui_op_11": "Automatic (changes by itself)",
+				"ui_op_12": "Clear",
+				"ui_op_13": "Cloudy",
+				"ui_op_14": "Rain",
+				"ui_op_15": "Storm",
+				"ui_op_16": "Snow",
+				"ui_op_17": "Fog",
+				"ui_estacion": "Season",
+				"ui_op_18": "Automatic (northern hemisphere)",
+				"ui_op_19": "Automatic (southern hemisphere)",
+				"ui_op_20": "Spring",
+				"ui_op_21": "Summer",
+				"ui_op_22": "Autumn",
+				"ui_op_23": "Winter",
+				"ui_eventos": "Events",
+				"ui_op_24": "Automatic (by date)",
+				"ui_op_25": "No events",
+				"ui_op_26": "Force Halloween",
+				"ui_op_27": "Force Christmas",
+				"ui_op_28": "Force New Year",
+				"ui_op_29": "Force concert",
+				"ui_op_30": "Force movie night",
+				"ui_op_31": "Force Red John",
+				"ui_op_32": "Force shooting stars",
+				"ui_op_33": "Force Valentine's Day",
+				"ui_tema": "Interface: theme",
+				"ui_op_34": "Wood (RPG)",
+				"ui_op_35": "Night",
+				"ui_op_36": "Light parchment",
+				"ui_op_37": "Neon",
+				"ui_op_38": "Clear glass",
+				"ui_op_39": "Wallpaper Engine color",
+				"ui_escala": "Interface: size (%)",
+				"ui_opacidad": "Interface: opacity (%)",
+				"ui_pos_estado": "Interface: clock and weather corner",
+				"ui_op_40": "Top right",
+				"ui_op_41": "Top left",
+				"ui_op_42": "Bottom right",
+				"ui_op_43": "Bottom left",
+				"ui_op_44": "Hidden",
+				"ui_pos_diario": "Interface: diary corner",
+				"ui_pos_mapa": "Interface: island buttons corner",
+				"ui_pos_botones": "Interface: settings and help corner",
+				"ui_lineas": "Interface: diary lines",
+				"ui_h12": "Interface: 12-hour clock",
+				"ui_avisos": "Interface: event notices (Halloween, concerts...)",
+				"ui_globos": "Speech bubbles",
+				"ui_op_59": "All",
+				"ui_op_60": "Only when zoomed in",
+				"ui_op_61": "Only the selected character",
+				"ui_op_62": "None (diary only)",
+				"ui_max_globos": "Bubbles: maximum at once",
+				"ui_escala_globos": "Bubbles: size (%)",
+				"ui_trafico": "World: amount of cars (%)",
+				"ui_particulas": "World: rain and snow intensity (%)",
+				"ui_animales": "World: animals"
+			},
+			"ja-jp": {
+				"ui_idioma": "Language",
+				"ui_op_1": "Automatic (system language)",
+				"ui_schemecolor": "Accent color (for the \"Wallpaper Engine color\" theme)",
+				"ui_mensaje": "Talk to the town (needs the free app. Example: Jane, who is Red John?)",
+				"ui_zoom": "Zoom",
+				"ui_camara": "Camera",
+				"ui_op_2": "Full map",
+				"ui_op_3": "Auto tour (follows the chats)",
+				"ui_ciclo": "Daylight",
+				"ui_op_4": "Real time",
+				"ui_op_5": "Always day",
+				"ui_op_6": "Always sunset",
+				"ui_op_7": "Always night",
+				"ui_nombres": "Always show names",
+				"ui_registro": "Show the chat diary",
+				"ui_estado": "Show clock and status",
+				"ui_sombras": "Shadows",
+				"ui_luces": "Night lights",
+				"ui_calidad": "Quality",
+				"ui_op_8": "High",
+				"ui_op_9": "Medium",
+				"ui_op_10": "Low",
+				"ui_puerto": "Companion app port",
+				"ui_clima": "Weather",
+				"ui_op_11": "Automatic (changes by itself)",
+				"ui_op_12": "Clear",
+				"ui_op_13": "Cloudy",
+				"ui_op_14": "Rain",
+				"ui_op_15": "Storm",
+				"ui_op_16": "Snow",
+				"ui_op_17": "Fog",
+				"ui_estacion": "Season",
+				"ui_op_18": "Automatic (northern hemisphere)",
+				"ui_op_19": "Automatic (southern hemisphere)",
+				"ui_op_20": "Spring",
+				"ui_op_21": "Summer",
+				"ui_op_22": "Autumn",
+				"ui_op_23": "Winter",
+				"ui_eventos": "Events",
+				"ui_op_24": "Automatic (by date)",
+				"ui_op_25": "No events",
+				"ui_op_26": "Force Halloween",
+				"ui_op_27": "Force Christmas",
+				"ui_op_28": "Force New Year",
+				"ui_op_29": "Force concert",
+				"ui_op_30": "Force movie night",
+				"ui_op_31": "Force Red John",
+				"ui_op_32": "Force shooting stars",
+				"ui_op_33": "Force Valentine's Day",
+				"ui_tema": "Interface: theme",
+				"ui_op_34": "Wood (RPG)",
+				"ui_op_35": "Night",
+				"ui_op_36": "Light parchment",
+				"ui_op_37": "Neon",
+				"ui_op_38": "Clear glass",
+				"ui_op_39": "Wallpaper Engine color",
+				"ui_escala": "Interface: size (%)",
+				"ui_opacidad": "Interface: opacity (%)",
+				"ui_pos_estado": "Interface: clock and weather corner",
+				"ui_op_40": "Top right",
+				"ui_op_41": "Top left",
+				"ui_op_42": "Bottom right",
+				"ui_op_43": "Bottom left",
+				"ui_op_44": "Hidden",
+				"ui_pos_diario": "Interface: diary corner",
+				"ui_pos_mapa": "Interface: island buttons corner",
+				"ui_pos_botones": "Interface: settings and help corner",
+				"ui_lineas": "Interface: diary lines",
+				"ui_h12": "Interface: 12-hour clock",
+				"ui_avisos": "Interface: event notices (Halloween, concerts...)",
+				"ui_globos": "Speech bubbles",
+				"ui_op_59": "All",
+				"ui_op_60": "Only when zoomed in",
+				"ui_op_61": "Only the selected character",
+				"ui_op_62": "None (diary only)",
+				"ui_max_globos": "Bubbles: maximum at once",
+				"ui_escala_globos": "Bubbles: size (%)",
+				"ui_trafico": "World: amount of cars (%)",
+				"ui_particulas": "World: rain and snow intensity (%)",
+				"ui_animales": "World: animals"
 			}
 		}
 	},

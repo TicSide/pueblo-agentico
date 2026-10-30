@@ -2,6 +2,7 @@
  * Una sola petición a la vez, con prioridades: usuario > interacción > charla > pensamiento. */
 'use strict';
 const SimCore = require('../wallpaper/js/sim-core.js');
+const Idiomas = require('../wallpaper/js/idiomas.js');
 const { execFile, spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
@@ -23,6 +24,9 @@ const TEMAS = ['las islas nuevas (el Mega Mall, la Avenida de la Comida con Pope
   'un rumor extraño sobre una carita sonriente roja pintada en una pared', 'los sueños que tuvieron', 'un consejo', 'una broma o burla amistosa', 'qué harían en un apocalipsis zombi', 'el clima', 'quién es el mejor del pueblo en algo'];
 const TEMA_ACT = { comer: 'la comida', banquete: 'el banquete', tomar_te: 'lo que están tomando', jugar_consola: 'el videojuego que juegan', arcade: 'los récords del arcade', fogata: 'una historia para contar junto al fuego', pingpong: 'quién va ganando', ajedrez: 'la partida de ajedrez', bailar: 'la música y sus pasos de baile', publico: 'el concierto', reunion: 'un caso misterioso', podcast: 'el tema del pódcast', ver_pelicula: 'la película que están viendo', trabajar_hq: 'el trabajo en la empresa', futbol: 'el partido de fútbol', basquet: 'el partido de básquet', voley: 'el partido de vóley playa', investigar: 'el caso de la escena del crimen', explorar: 'lo que encontraron explorando', surf: 'las olas', tomar_sol: 'el sol y la playa', ajedrez_gigante: 'la partida de ajedrez gigante', visitar_tumbas: 'las leyendas del cementerio', ver_partido: 'quién va ganando el partido', comprar: 'las compras del día', jugar_perro: 'el perro' };
 
+// Las instrucciones siguen en español; solo cambia el idioma en que deben responder
+const reglaIdioma = (s, lang) => (lang === 'es' || !Idiomas.NOMBRE_IA[lang] ? s : s.replace('Español latino neutro.', `Write every line, thought and summary in ${Idiomas.NOMBRE_IA[lang]}, even though these instructions are in Spanish.`));
+
 function hhmm(h) { const H = Math.floor(h), M = Math.floor((h - H) * 60); return ('0' + H).slice(-2) + ':' + ('0' + M).slice(-2); }
 function relTxt(v) { return v > 50 ? 'son muy cercanos' : v > 15 ? 'son amigos' : v < -40 ? 'son enemigos o grandes rivales' : v < -10 ? 'no se caen muy bien' : 'se conocen poco'; }
 
@@ -36,6 +40,7 @@ class IA {
     this.alCambio = () => {};
     this.stats = { ok: 0, fallos: 0, ms: 0 };
     this.activa = true;
+    this.idioma = 'es';
   }
 
   setEstado(e) { if (e !== this.estado) { this.estado = e; this.alCambio(e); } }
@@ -120,7 +125,7 @@ class IA {
     const inicio = Date.now();
     const cuerpo = {
       model: this.cfg.modelo, stream: false, format: esquema, keep_alive: this.cfg.keep_alive,
-      messages: [{ role: 'system', content: (opciones && opciones.sistema) || SISTEMA }, { role: 'user', content: usuario }],
+      messages: [{ role: 'system', content: reglaIdioma((opciones && opciones.sistema) || SISTEMA, this.idioma) }, { role: 'user', content: usuario }],
       options: { temperature: this.cfg.temperatura, top_p: 0.95, num_predict: (opciones && opciones.max) || 360, num_ctx: this.cfg.num_ctx }
     };
     if (this.cfg.think !== undefined) cuerpo.think = this.cfg.think;

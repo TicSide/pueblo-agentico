@@ -4,6 +4,8 @@
 const SimCore = require('../wallpaper/js/sim-core.js');
 const DM = require('../wallpaper/js/datos-mundo.js');
 const DP = require('../wallpaper/js/datos-personajes.js');
+const Idiomas = require('../wallpaper/js/idiomas.js');
+require('../wallpaper/js/idioma-en.js');
 
 const errores = [];
 const mal = (m) => errores.push(m);
@@ -34,6 +36,23 @@ for (const I of DM.islas) if (I.x1 > DM.N || I.z1 > DM.N) mal(`la isla ${I.id} s
 const vistos = new Set([0]), cola = [0];
 while (cola.length) for (const m of DM.red.nodos[cola.pop()].vec) if (!vistos.has(m)) { vistos.add(m); cola.push(m); }
 if (vistos.size !== DM.red.nodos.length) mal(`la red de calles está cortada: ${vistos.size} de ${DM.red.nodos.length} cruces conectados`);
+
+// traducciones: las listas de cada idioma y el contenido en inglés deben cubrir todo
+for (const e of Idiomas.comprobar()) mal('idioma ' + e);
+const EN = Idiomas.contenido('en');
+for (const k in SimCore.ACT) {
+  if (Idiomas.ACTOS.indexOf(k) < 0) mal(`actividad sin traducir: ${k}`);
+  if (SimCore.ACT[k].txtEn && !EN.actEn[k]) mal(`actividad sin plantilla en inglés: ${k}`);
+}
+for (const n of [...DM.zonas.map((z) => z.nombre), ...DM.spots.map((s) => s.lugar).filter(Boolean)]) if (!EN.lugares[n]) mal(`lugar sin traducir: ${n}`);
+for (const d of DP.base) {
+  const x = EN.personajes[d.id];
+  if (!x) mal(`${d.id} no tiene texto en inglés`);
+  else if (x.length - 1 !== d.frases.length) mal(`${d.id}: ${x.length - 1} frases en inglés y ${d.frases.length} en español`);
+}
+for (const k in SimCore.COMENTARIOS) if (!EN.comentarios[k]) mal(`comentarios sin traducir: ${k}`);
+for (const k in SimCore.INTER_PAR) if (!EN.par[k]) mal(`interacción sin traducir: ${k}`);
+for (const v of [...Object.values(SimCore.TXT), ...Object.values(SimCore.EVENTOS)]) if (Idiomas.CLAVES.indexOf(v) < 0) mal(`texto sin clave de idioma: ${v}`);
 
 // un rato de simulación, para que aparezca lo que solo falla al correr
 let t = new Date('2026-06-15T08:00:00').getTime();
