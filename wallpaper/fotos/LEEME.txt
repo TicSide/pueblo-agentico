@@ -1,0 +1,6 @@
+Fotos opcionales para las fichas de los personajes.
+
+Guarda aquí una imagen cuadrada llamada <id del personaje>.png (por ejemplo, jane.png) y la ficha la usará.
+Si no hay foto, la ficha muestra el retrato voxel de la carpeta retratos.
+
+El repositorio no incluye fotos de personas ni imágenes promocionales: no tienen licencia para redistribuirse.

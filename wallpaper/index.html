@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pueblo Agéntico</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/estilo.css">
+</head>
+<body>
+  <div id="escena"></div>
+  <div id="capa"></div>
+  <div class="esquina" id="esq-ar-izq"></div><div class="esquina" id="esq-ar-der"></div><div class="esquina" id="esq-ab-izq"></div><div class="esquina" id="esq-ab-der"></div>
+  <div id="guardados"></div>
+
+  <div id="estado" class="pixel esc">
+    <div class="hora"><span id="ico-hora"></span><span id="reloj">--:--</span><span id="fase"></span></div>
+    <div class="clima"><span id="ico-clima"></span><span id="clima"></span></div>
+    <div id="evento"></div>
+    <div class="ia"><i id="led" class="led apagado"></i><span id="cerebro">INICIANDO</span><span id="modelo"></span><button id="btn-ia" class="interruptor" title="Encender o apagar la IA local (Ollama)"><span></span></button></div>
+    <div id="poblacion"></div>
+  </div>
+  <div id="aviso" class="pixel esc"></div>
+  <div id="mapa" class="pixel esc">
+    <div class="zoom"><button data-zoom="1" title="Acercar"></button><button data-zoom="-1" title="Alejar"></button><button data-vista="1" title="Ver todo el mapa"></button></div>
+    <div class="islas"><button data-isla="pueblo">PUEBLO</button><button data-isla="tec">TECNOLOGÍA</button><button data-isla="cine">CINE</button><button data-isla="festival">FESTIVAL</button><button data-isla="bosque">BOSQUE</button><button data-isla="deportes">DEPORTES</button><button data-isla="barrio">BARRIO</button><button data-isla="raccoon">RACCOON</button><button data-isla="playa">PLAYA</button><button data-isla="mall">MALL</button><button data-isla="comida">COMIDA</button><button data-isla="diversiones">DIVERSIONES</button><button data-isla="japon">JAPÓN</button><button data-isla="superparque">SÚPER PARQUE</button></div>
+  </div>
+
+  <div id="banner" class="pixel esc"></div>
+  <div id="ficha" class="pixel esc"></div>
+  <div id="registro" class="pixel esc"><h3>DIARIO DEL PUEBLO</h3><div id="lineas"></div></div>
+
+  <div id="botonera" class="esc"><button id="btn-buscar" class="pixel" title="Buscar y ubicar a un vecino"></button><button id="btn-editor" class="pixel" title="Editor de personajes (se abre en el navegador)"></button><button id="btn-ajustes" class="pixel" title="Ajustes de la interfaz"></button><button id="btn-ayuda" class="pixel" title="Ayuda"></button></div>
+  <div id="ajustes" class="pixel esc"></div>
+  <div id="buscador" class="pixel esc"></div>
+  <div id="ayuda" class="pixel esc">
+    <h3>PUEBLO AGÉNTICO</h3>
+    <dl>
+      <dt>CLIC</dt><dd>en un vecino: ver su ficha, saludarlo, darle comida o mandarlo a jugar o a dormir.</dd>
+      <dt>DOBLE CLIC</dt><dd>la cámara lo sigue.</dd>
+      <dt>RUEDA</dt><dd>acercar o alejar. Arrastrar mueve la vista. Abajo a la izquierda: zoom y viaje a cada isla.</dd>
+      <dt>AJUSTES</dt><dd>el botón del engranaje cambia el tema, el tamaño, las esquinas de cada panel, los globos de diálogo, el tránsito y el clima. También están en las propiedades de Wallpaper Engine.</dd>
+      <dt>BUSCAR</dt><dd>el botón de la lupa abre el buscador: elige una letra, un grupo o una isla y haz clic en un vecino para ir donde está. Una columna de luz lo marca.</dd>
+      <dt>EDITOR</dt><dd>el botón del lápiz abre el editor de personajes en el navegador: crea vecinos nuevos o cambia los que ya están. Lo que guardes aparece al instante en el pueblo.</dd>
+      <dt>IA</dt><dd>el interruptor del reloj enciende o apaga la IA (y Ollama, para liberar memoria). Apagada, el pueblo sigue con frases pregrabadas.</dd>
+      <dt>HABLARLES</dt><dd><kbd>Ctrl</kbd> <kbd>Alt</kbd> <kbd>H</kbd>, o el campo «Hablarle al pueblo» en Wallpaper Engine. Empieza con un nombre: «Jane, ¿quién es Red John?»</dd>
+    </dl>
+    <p>La IA corre en tu PC con Ollama. Si el cerebro está apagado, el pueblo sigue vivo con frases pregrabadas.</p>
+    <small>CLIC PARA CERRAR</small>
+  </div>
+
+  <script src="lib/three.min.js"></script>
+  <script src="js/personalizados.js"></script>
+  <script src="js/datos-personajes.js"></script>
+  <script src="js/datos-mundo.js"></script>
+  <script src="js/sim-core.js"></script>
+  <script src="js/geo.js"></script>
+  <script src="js/caras.js"></script>
+  <script src="js/iconos.js"></script>
+  <script src="js/modelos.js"></script>
+  <script src="js/mundo.js"></script>
+  <script src="js/fondo.js"></script>
+  <script src="js/escena.js"></script>
+  <script src="js/actores.js"></script>
+  <script src="js/vehiculos.js"></script>
+  <script src="js/animales.js"></script>
+  <script src="js/clima.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/red.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

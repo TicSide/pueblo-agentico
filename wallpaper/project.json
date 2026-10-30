@@ -1,0 +1,496 @@
+{
+	"contentrating": "Everyone",
+	"description": "Archipiélago isométrico low-poly con vida propia: el pueblo central y trece islas temáticas (Tecnología, Cine, Festival, Bosque Mágico, Deportes, Barrio Residencial, Raccoon City, Playa del Sol, Mega Mall, Avenida de la Comida, Parque de Diversiones, Japón y Súper Parque) unidas por puentes. 191 personajes comen, duermen, trabajan, se saludan, se abrazan, discuten y charlan entre ellos con una IA local (Ollama). Incluye editor de personajes y buscador.",
+	"file": "index.html",
+	"general": {
+		"properties": {
+			"schemecolor": {
+				"order": 0,
+				"text": "Color de acento (para el tema «Color de Wallpaper Engine»)",
+				"type": "color",
+				"value": "0.85098 0.46667 0.34118"
+			},
+			"mensaje": {
+				"order": 1,
+				"text": "Hablarle al pueblo (ej.: Jane, ¿quién es Red John?)",
+				"type": "textinput",
+				"value": ""
+			},
+			"zoom": {
+				"order": 2,
+				"text": "Zoom",
+				"type": "slider",
+				"min": 80,
+				"max": 400,
+				"value": 100,
+				"fraction": false
+			},
+			"camara": {
+				"order": 3,
+				"text": "Cámara",
+				"type": "combo",
+				"options": [
+					{
+						"label": "Mapa completo",
+						"value": "mapa"
+					},
+					{
+						"label": "Paseo automático (sigue las charlas)",
+						"value": "paseo"
+					}
+				],
+				"value": "mapa"
+			},
+			"ciclo": {
+				"order": 4,
+				"text": "Luz del día",
+				"type": "combo",
+				"options": [
+					{
+						"label": "Hora real",
+						"value": "real"
+					},
+					{
+						"label": "Siempre de día",
+						"value": "dia"
+					},
+					{
+						"label": "Siempre atardecer",
+						"value": "tarde"
+					},
+					{
+						"label": "Siempre de noche",
+						"value": "noche"
+					}
+				],
+				"value": "real"
+			},
+			"nombres": {
+				"order": 5,
+				"text": "Mostrar nombres siempre",
+				"type": "bool",
+				"value": false
+			},
+			"registro": {
+				"order": 6,
+				"text": "Mostrar registro de charlas",
+				"type": "bool",
+				"value": true
+			},
+			"estado": {
+				"order": 7,
+				"text": "Mostrar reloj y estado",
+				"type": "bool",
+				"value": true
+			},
+			"sombras": {
+				"order": 8,
+				"text": "Sombras",
+				"type": "bool",
+				"value": true
+			},
+			"luces": {
+				"order": 9,
+				"text": "Luces de noche",
+				"type": "bool",
+				"value": true
+			},
+			"calidad": {
+				"order": 10,
+				"text": "Calidad",
+				"type": "combo",
+				"options": [
+					{
+						"label": "Alta",
+						"value": "1"
+					},
+					{
+						"label": "Media",
+						"value": "0.75"
+					},
+					{
+						"label": "Baja",
+						"value": "0.5"
+					}
+				],
+				"value": "1"
+			},
+			"puerto": {
+				"order": 11,
+				"text": "Puerto del cerebro local",
+				"type": "textinput",
+				"value": "8787"
+			},
+			"clima": {
+				"order": 12,
+				"text": "Clima",
+				"type": "combo",
+				"options": [
+					{
+						"label": "Automático (cambia solo)",
+						"value": "auto"
+					},
+					{
+						"label": "Despejado",
+						"value": "despejado"
+					},
+					{
+						"label": "Nublado",
+						"value": "nublado"
+					},
+					{
+						"label": "Lluvia",
+						"value": "lluvia"
+					},
+					{
+						"label": "Tormenta",
+						"value": "tormenta"
+					},
+					{
+						"label": "Nieve",
+						"value": "nieve"
+					},
+					{
+						"label": "Niebla",
+						"value": "niebla"
+					}
+				],
+				"value": "auto"
+			},
+			"estacion": {
+				"order": 13,
+				"text": "Estación",
+				"type": "combo",
+				"options": [
+					{
+						"label": "Automática (hemisferio norte)",
+						"value": "auto"
+					},
+					{
+						"label": "Automática (hemisferio sur)",
+						"value": "auto_sur"
+					},
+					{
+						"label": "Primavera",
+						"value": "primavera"
+					},
+					{
+						"label": "Verano",
+						"value": "verano"
+					},
+					{
+						"label": "Otoño",
+						"value": "otono"
+					},
+					{
+						"label": "Invierno",
+						"value": "invierno"
+					}
+				],
+				"value": "auto"
+			},
+			"eventos": {
+				"order": 14,
+				"text": "Eventos",
+				"type": "combo",
+				"options": [
+					{
+						"label": "Automáticos (según la fecha)",
+						"value": "auto"
+					},
+					{
+						"label": "Sin eventos",
+						"value": "no"
+					},
+					{
+						"label": "Forzar Halloween",
+						"value": "halloween"
+					},
+					{
+						"label": "Forzar Navidad",
+						"value": "navidad"
+					},
+					{
+						"label": "Forzar Año Nuevo",
+						"value": "anio_nuevo"
+					},
+					{
+						"label": "Forzar concierto",
+						"value": "concierto"
+					},
+					{
+						"label": "Forzar noche de cine",
+						"value": "cine"
+					},
+					{
+						"label": "Forzar Red John",
+						"value": "red_john"
+					},
+					{
+						"label": "Forzar estrellas fugaces",
+						"value": "estrellas_fugaces"
+					},
+					{
+						"label": "Forzar San Valentín",
+						"value": "san_valentin"
+					}
+				],
+				"value": "auto"
+			},
+			"tema": {
+				"text": "Interfaz: tema",
+				"type": "combo",
+				"options": [
+					{
+						"label": "Madera (RPG)",
+						"value": "madera"
+					},
+					{
+						"label": "Noche",
+						"value": "noche"
+					},
+					{
+						"label": "Pergamino claro",
+						"value": "pergamino"
+					},
+					{
+						"label": "Neón",
+						"value": "neon"
+					},
+					{
+						"label": "Cristal transparente",
+						"value": "cristal"
+					},
+					{
+						"label": "Color de Wallpaper Engine",
+						"value": "acento"
+					}
+				],
+				"value": "madera",
+				"order": 15
+			},
+			"escala": {
+				"text": "Interfaz: tamaño (%)",
+				"type": "slider",
+				"min": 60,
+				"max": 160,
+				"value": 100,
+				"fraction": false,
+				"order": 16
+			},
+			"opacidad": {
+				"text": "Interfaz: opacidad (%)",
+				"type": "slider",
+				"min": 30,
+				"max": 100,
+				"value": 100,
+				"fraction": false,
+				"order": 17
+			},
+			"pos_estado": {
+				"text": "Interfaz: esquina del reloj y el clima",
+				"type": "combo",
+				"options": [
+					{
+						"label": "Arriba a la derecha",
+						"value": "ar-der"
+					},
+					{
+						"label": "Arriba a la izquierda",
+						"value": "ar-izq"
+					},
+					{
+						"label": "Abajo a la derecha",
+						"value": "ab-der"
+					},
+					{
+						"label": "Abajo a la izquierda",
+						"value": "ab-izq"
+					},
+					{
+						"label": "Oculto",
+						"value": "oculto"
+					}
+				],
+				"value": "ar-der",
+				"order": 18
+			},
+			"pos_diario": {
+				"text": "Interfaz: esquina del diario",
+				"type": "combo",
+				"options": [
+					{
+						"label": "Arriba a la derecha",
+						"value": "ar-der"
+					},
+					{
+						"label": "Arriba a la izquierda",
+						"value": "ar-izq"
+					},
+					{
+						"label": "Abajo a la derecha",
+						"value": "ab-der"
+					},
+					{
+						"label": "Abajo a la izquierda",
+						"value": "ab-izq"
+					},
+					{
+						"label": "Oculto",
+						"value": "oculto"
+					}
+				],
+				"value": "ab-der",
+				"order": 19
+			},
+			"pos_mapa": {
+				"text": "Interfaz: esquina de los botones de islas",
+				"type": "combo",
+				"options": [
+					{
+						"label": "Arriba a la derecha",
+						"value": "ar-der"
+					},
+					{
+						"label": "Arriba a la izquierda",
+						"value": "ar-izq"
+					},
+					{
+						"label": "Abajo a la derecha",
+						"value": "ab-der"
+					},
+					{
+						"label": "Abajo a la izquierda",
+						"value": "ab-izq"
+					},
+					{
+						"label": "Oculto",
+						"value": "oculto"
+					}
+				],
+				"value": "ab-izq",
+				"order": 20
+			},
+			"pos_botones": {
+				"text": "Interfaz: esquina de ajustes y ayuda",
+				"type": "combo",
+				"options": [
+					{
+						"label": "Arriba a la derecha",
+						"value": "ar-der"
+					},
+					{
+						"label": "Arriba a la izquierda",
+						"value": "ar-izq"
+					},
+					{
+						"label": "Abajo a la derecha",
+						"value": "ab-der"
+					},
+					{
+						"label": "Abajo a la izquierda",
+						"value": "ab-izq"
+					}
+				],
+				"value": "ab-der",
+				"order": 21
+			},
+			"lineas": {
+				"text": "Interfaz: líneas del diario",
+				"type": "slider",
+				"min": 2,
+				"max": 12,
+				"value": 7,
+				"fraction": false,
+				"order": 22
+			},
+			"h12": {
+				"text": "Interfaz: hora en formato de 12 horas",
+				"type": "bool",
+				"value": false,
+				"order": 23
+			},
+			"avisos": {
+				"text": "Interfaz: avisos de eventos (Halloween, conciertos...)",
+				"type": "bool",
+				"value": true,
+				"order": 24
+			},
+			"globos": {
+				"text": "Globos de diálogo",
+				"type": "combo",
+				"options": [
+					{
+						"label": "Todos",
+						"value": "todos"
+					},
+					{
+						"label": "Solo al acercar la cámara",
+						"value": "cerca"
+					},
+					{
+						"label": "Solo el personaje elegido",
+						"value": "elegido"
+					},
+					{
+						"label": "Ninguno (solo el diario)",
+						"value": "ninguno"
+					}
+				],
+				"value": "todos",
+				"order": 25
+			},
+			"max_globos": {
+				"text": "Globos: máximo a la vez",
+				"type": "slider",
+				"min": 1,
+				"max": 20,
+				"value": 8,
+				"fraction": false,
+				"order": 26
+			},
+			"escala_globos": {
+				"text": "Globos: tamaño (%)",
+				"type": "slider",
+				"min": 60,
+				"max": 160,
+				"value": 100,
+				"fraction": false,
+				"order": 27
+			},
+			"trafico": {
+				"text": "Mundo: cantidad de autos (%)",
+				"type": "slider",
+				"min": 0,
+				"max": 100,
+				"value": 100,
+				"fraction": false,
+				"order": 28
+			},
+			"particulas": {
+				"text": "Mundo: intensidad de lluvia y nieve (%)",
+				"type": "slider",
+				"min": 0,
+				"max": 150,
+				"value": 100,
+				"fraction": false,
+				"order": 29
+			},
+			"animales": {
+				"text": "Mundo: animales",
+				"type": "bool",
+				"value": true,
+				"order": 30
+			}
+		}
+	},
+	"preview": "preview.png",
+	"tags": [
+		"Game",
+		"Fantasy",
+		"Relaxing"
+	],
+	"title": "Pueblo Agéntico",
+	"type": "web",
+	"visibility": "private"
+}

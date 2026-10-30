@@ -1,0 +1,22 @@
+# Dependencias del cerebro (se instalan con npm install)
+cerebro/node_modules/
+
+# Memoria y registro del pueblo: son datos privados de cada PC
+cerebro/datos/*
+!cerebro/datos/.gitkeep
+
+# Imágenes de referencia de terceros, solo para trabajar
+arte/
+
+# Fotos de personas e imágenes promocionales: no tienen licencia para redistribuirse
+wallpaper/fotos/*
+!wallpaper/fotos/LEEME.txt
+
+# Notas internas de desarrollo
+CLAUDE.md
+
+# Capturas de las pruebas
+.playwright-mcp/
+
+*.tmp
+*.log

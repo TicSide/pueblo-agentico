@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cerebro del Pueblo</title>
+<link rel="icon" href="data:,">
+<style>
+  :root { --fondo: #12131c; --panel: #1c1e2b; --borde: #2c2f42; --texto: #ecebf3; --suave: #9a9bb0; --acento: #d97757; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--fondo); color: var(--texto); font: 14px/1.45 "Segoe UI", system-ui, sans-serif; }
+  header { display: flex; align-items: center; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--borde); }
+  header h1 { font-size: 18px; margin: 0; } header .chip { margin-left: auto; padding: 4px 10px; border-radius: 99px; background: #2a2d40; font-size: 12px; }
+  .chip.listo { background: #1f3b2a; color: #b9f5c8; } .chip.pensando { background: #4a2a20; color: #ffd9c9; } .chip.offline, .chip.sin_modelo { background: #4a3a1a; color: #ffe7a6; }
+  main { display: grid; grid-template-columns: 1fr 340px; gap: 16px; padding: 16px 20px; height: calc(100vh - 58px); }
+  section { background: var(--panel); border: 1px solid var(--borde); border-radius: 12px; padding: 12px 14px; overflow: hidden; display: flex; flex-direction: column; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .6px; color: var(--suave); margin: 0 0 8px; }
+  #log { flex: 1; overflow-y: auto; font-size: 13px; }
+  #log div { padding: 3px 0; border-bottom: 1px solid #23253400; } #log b { color: var(--acento); } #log i { color: var(--suave); } #log .tu { color: #ffd27a; }
+  form { display: flex; gap: 8px; margin-top: 10px; }
+  select, input, button { font: inherit; color: var(--texto); background: #23263a; border: 1px solid var(--borde); border-radius: 9px; padding: 8px 10px; }
+  input { flex: 1; } button { background: var(--acento); border: 0; font-weight: 600; cursor: pointer; }
+  #gente { overflow-y: auto; flex: 1; font-size: 12.5px; }
+  #gente div { display: flex; justify-content: space-between; gap: 8px; padding: 3px 0; border-bottom: 1px solid #262838; }
+  #gente span { color: var(--suave); text-align: right; }
+</style>
+</head>
+<body>
+<header><h1>🧠 Cerebro del Pueblo Agéntico</h1><span id="ia" class="chip">conectando…</span><a href="/editor" style="margin-left:auto;color:var(--acento)">Editor de personajes</a><button id="btn-ia" type="button">Apagar IA</button></header>
+<main>
+  <section>
+    <h2>Lo que pasa en el pueblo</h2>
+    <div id="log"></div>
+    <form id="f">
+      <select id="a"><option value="">Para: quien sea</option></select>
+      <input id="t" placeholder="Escríbele al pueblo… (ej.: Jane, ¿quién es Red John?)" autocomplete="off" autofocus>
+      <button>Enviar</button>
+    </form>
+  </section>
+  <section><h2>Habitantes</h2><div id="gente"></div></section>
+</main>
+<script>
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  let nombres = {}, iaActiva = true;
+  function pintarIA(i) { iaActiva = i.activa !== false && i.estado !== 'apagada'; $('ia').className = 'chip ' + i.estado; $('ia').textContent = `${i.estado} · ${i.modelo}`; $('btn-ia').textContent = iaActiva ? 'Apagar IA (y Ollama)' : 'Encender IA'; }
+  document.addEventListener('DOMContentLoaded', () => {});
+  const ACT = {};
+  function linea(html, clase) { const d = document.createElement('div'); if (clase) d.className = clase; d.innerHTML = `<i>${new Date().toTimeString().slice(0, 5)}</i> ${html}`; $('log').appendChild(d); while ($('log').children.length > 300) $('log').firstChild.remove(); $('log').scrollTop = 1e9; }
+  fetch('/api/personajes').then((r) => r.json()).then((l) => { for (const p of l) { nombres[p.id] = p.corto; const o = document.createElement('option'); o.value = p.id; o.textContent = p.nombre; $('a').appendChild(o); } });
+  function conectar() {
+    const ws = new WebSocket(`ws://${location.host}/ws?cliente=panel`);
+    ws.onmessage = (ev) => {
+      const m = JSON.parse(ev.data);
+      if (m.t === 'ia') pintarIA(m);
+      if (m.t === 'decir') linea(`<b>${esc(nombres[m.id] || m.id)}</b>${m.modo === 'piensa' ? ' (piensa)' : ''}: ${esc(m.texto)}`);
+      if (m.t === 'log') linea(`<i>${esc(m.texto)}</i>`);
+      if (m.t === 'usuario') linea(`<span class="tu">Tú: ${esc(m.texto)}</span>`);
+      if (m.t === 'estado') {
+        if (m.ia) pintarIA(m.ia);
+        $('gente').innerHTML = m.personajes.map((p) => `<div><b>${esc(nombres[p.id] || p.id)}</b><span>${esc(p.act)}${p.enCharla ? ' 💬' : ''} · ${esc(p.emocion)}</span></div>`).join('');
+      }
+    };
+    ws.onclose = () => setTimeout(conectar, 3000);
+  }
+  conectar();
+  $('btn-ia').onclick = () => fetch('/api/ia', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ activa: !iaActiva }) });
+  $('f').onsubmit = (e) => {
+    e.preventDefault();
+    const texto = $('t').value.trim();
+    if (!texto) return;
+    fetch('/api/mensaje', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ texto, a: $('a').value || undefined }) });
+    $('t').value = '';
+  };
+</script>
+</body>
+</html>

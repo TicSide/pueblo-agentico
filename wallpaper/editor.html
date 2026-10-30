@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Editor de Personajes</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="css/editor.css">
+</head>
+<body>
+  <header>
+    <h1>EDITOR DE PERSONAJES</h1>
+    <span id="estado-editor">CONECTANDO...</span>
+  </header>
+  <main>
+    <aside id="columna-lista">
+      <div class="crear">
+        <button id="btn-nuevo" class="principal">NUEVO PERSONAJE</button>
+        <div class="plantillas" id="plantillas"></div>
+      </div>
+      <input id="buscar" type="search" placeholder="Buscar por nombre..." autocomplete="off">
+      <select id="filtro"></select>
+      <div id="lista"></div>
+      <small id="cuenta"></small>
+    </aside>
+
+    <section id="columna-vista">
+      <div id="lienzo"></div>
+      <div class="sobre arriba"><b id="vista-nombre"></b><span id="vista-serie"></span><em id="vista-marca"></em></div>
+      <div class="sobre abajo">
+        <div class="grupo-botones" id="animaciones"></div>
+        <select id="emocion" title="Expresión de la cara"></select>
+        <button id="btn-azar" title="Cambia solo el aspecto, al azar">ASPECTO AL AZAR</button>
+      </div>
+    </section>
+
+    <section id="columna-form">
+      <nav id="pestanas"></nav>
+      <form id="formulario" autocomplete="off"></form>
+      <footer>
+        <button id="btn-guardar" class="principal">GUARDAR</button>
+        <button id="btn-ver" title="La cámara del wallpaper va hasta este personaje">VER EN EL PUEBLO</button>
+        <button id="btn-duplicar" title="Crea un personaje nuevo a partir de este">DUPLICAR</button>
+        <button id="btn-restaurar" title="Vuelve al personaje original">RESTAURAR</button>
+        <button id="btn-ocultar" title="Lo saca del pueblo sin borrar sus recuerdos">OCULTAR</button>
+        <button id="btn-borrar" class="peligro">BORRAR</button>
+      </footer>
+    </section>
+  </main>
+  <div id="aviso-editor"></div>
+
+  <script src="lib/three.min.js"></script>
+  <script src="js/personalizados.js"></script>
+  <script src="js/datos-personajes.js"></script>
+  <script src="js/datos-mundo.js"></script>
+  <script src="js/sim-core.js"></script>
+  <script src="js/geo.js"></script>
+  <script src="js/caras.js"></script>
+  <script src="js/modelos.js"></script>
+  <script src="js/editor.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "puerto": 8787,
+  "ollama": {
+    "url": "http://127.0.0.1:11434",
+    "modelo": "gemma3:4b",
+    "temperatura": 0.9,
+    "keep_alive": "10m",
+    "num_ctx": 2048,
+    "timeout": 90
+  },
+  "charlaCada": [40, 90],
+  "pensamientoCada": [70, 160],
+  "probPensamientoIA": 0.5,
+  "maxCharlas": 1,
+  "suenoDesde": 0,
+  "suenoHasta": 7,
+  "pausarSinWallpaper": true,
+  "iniciarOllama": true
+}

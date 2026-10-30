@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Estudio de fotos</title>
+<!-- Herramienta (no es parte del wallpaper): saca la "foto de estudio" de cada personaje como figura de colección
+     y arma el póster de la vista previa. Se abre servida por http y la maneja Playwright (ver CLAUDE.md). -->
+<style>
+  @font-face { font-family: 'Pixelify Sans'; src: url(../fuentes/pixelify-sans.woff2) format('woff2'); font-weight: 400 700; }
+  @font-face { font-family: 'Silkscreen'; src: url(../fuentes/silkscreen-400.woff2) format('woff2'); font-weight: 400; }
+  @font-face { font-family: 'Silkscreen'; src: url(../fuentes/silkscreen-700.woff2) format('woff2'); font-weight: 700; }
+  html, body { margin: 0; background: transparent; }
+  #lienzo { width: 384px; height: 384px; display: block; }
+  #poster { width: 1600px; height: 900px; display: block; }
+</style>
+</head>
+<body>
+<canvas id="lienzo" width="768" height="768"></canvas>
+<canvas id="poster" width="1600" height="900"></canvas>
+<script src="../lib/three.min.js"></script>
+<script src="../js/datos-personajes.js"></script>
+<script src="../js/geo.js"></script>
+<script src="../js/caras.js"></script>
+<script src="../js/modelos.js"></script>
+<script>
+'use strict';
+const DP = window.DATOS_PERSONAJES;
+// objeto característico de cada uno (como una figura de colección)
+const OBJETO = {
+  jane: 'taza', tyrion: 'taza', qwen: 'taza', hank: 'taza', claude: 'libro', reid: 'libro', gideon: 'libro', jon: 'espada', arya: 'espada', aragorn: 'espada',
+  legolas: 'arco', atreus: 'arco', gimli: 'hacha', kratos: 'hacha', sam: 'sarten', chef: 'sarten', lara: 'antorcha',
+  deacon: 'llave', garcia: 'taza', chris: null,
+  omar: 'control', tomas: 'cana', ana: 'libro', silva: 'binoculares', ernesto: 'regadera', rosa: 'regadera', carla: 'sarten', valentina: 'taza',
+  lucia: 'taza', max: 'palomitas', bea: 'mic', marina: 'binoculares', hans: 'helado', mateo: 'helado', julio: 'libro',
+  pepe: 'helado', yuki: 'taza', paco: 'palomitas', rocco: 'guitarra', mara: 'mic', bongo: 'baquetas', tina: 'comida', nina: 'helado', bronn: 'espada', brienne: 'espada', arwen: 'libro', vanpelt: 'taza', rigsby: 'comida', rossi: 'libro'
+};
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('lienzo'), antialias: true, alpha: true, preserveDrawingBuffer: true });
+renderer.setSize(768, 768, false);
+renderer.setClearColor(0x000000, 0);
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.15;
+const escena = new THREE.Scene();
+escena.add(new THREE.HemisphereLight(0xfdfbff, 0x8a7a6a, 1.25));
+const clave = new THREE.DirectionalLight(0xfff0dc, 2.6); clave.position.set(-3, 6, 5); clave.castShadow = true;
+clave.shadow.mapSize.set(1024, 1024); Object.assign(clave.shadow.camera, { left: -3, right: 3, top: 3, bottom: -3, near: 0.5, far: 20 }); clave.shadow.radius = 4; clave.shadow.bias = -0.0008;
+escena.add(clave);
+const relleno = new THREE.DirectionalLight(0xc8dcff, 0.9); relleno.position.set(5, 2, 3); escena.add(relleno);
+const contra = new THREE.DirectionalLight(0xffffff, 1.4); contra.position.set(0, 5, -6); escena.add(contra);
+const piso = new THREE.Mesh(new THREE.PlaneGeometry(12, 12), new THREE.ShadowMaterial({ opacity: 0.28 })); piso.rotation.x = -Math.PI / 2; piso.receiveShadow = true; escena.add(piso);
+const camara = new THREE.PerspectiveCamera(24, 1, 0.1, 100);
+const altos = {};
+let actual = null;
+
+function posar(rig, d, id) {
+  const r = rig;
+  if (r.brazoI) { r.brazoI.rotation.z = -0.14; r.brazoI.rotation.x = 0.05; }
+  if (r.brazoD) { r.brazoD.rotation.z = 0.14; r.brazoD.rotation.x = 0.05; }
+  if (r.cabeza) r.cabeza.rotation.y = 0.18;
+  const nombre = OBJETO[id];
+  if (!nombre || !r.manoD) return;
+  const it = PA.Modelos.crearItem(nombre, d);
+  if (!it) return;
+  if (it.en === 'ambasCentro') { it.g.position.set((r.dims.TW || 0.5) / 2 + 0.08, 0, 0.02); r.manoD.add(it.g); r.brazoD.rotation.x = it.ang; r.brazoI.rotation.x = it.ang; r.brazoI.rotation.z = 0.3; r.brazoD.rotation.z = -0.3; }
+  else { it.g.position.set(0, 0, 0.02); r.manoD.add(it.g); r.brazoD.rotation.x = it.ang; r.brazoD.rotation.z = 0.05; }
+}
+
+// encuadre solo con lo que se ve (la caja invisible para los clics no cuenta)
+function encuadrar(obj, giro) {
+  const caja = new THREE.Box3();
+  obj.updateMatrixWorld(true);
+  obj.traverse((o) => { if ((o.isMesh) && o.visible && !(o.material && o.material.visible === false)) { let v = true; for (let p = o.parent; p; p = p.parent) if (!p.visible) v = false; if (v) caja.expandByObject(o); } });
+  const tam = caja.getSize(new THREE.Vector3()), c = caja.getCenter(new THREE.Vector3());
+  const alto = Math.max(tam.y, tam.x * 0.9, tam.z * 0.75);
+  const d = (alto / 2) / Math.tan(THREE.MathUtils.degToRad(camara.fov / 2)) / 0.84;
+  const a = THREE.MathUtils.degToRad(giro);
+  camara.position.set(c.x + Math.sin(a) * d, c.y + alto * 0.2, c.z + Math.cos(a) * d);
+  camara.lookAt(c.x, c.y - alto * 0.03, c.z);
+  return tam.y;
+}
+
+// Saca la foto de un personaje (fondo transparente) y la deja en el lienzo
+function foto(id) {
+  if (actual) escena.remove(actual);
+  const d = DP.personajes.find((p) => p.id === id);
+  if (!d) return false;
+  const rig = PA.Modelos.crear(d);
+  rig.raiz.traverse((o) => { if (o.isMesh) { o.castShadow = true; if (o === rig.hit || (o.material && o.material.visible === false)) o.visible = false; } });
+  if (rig.cara) PA.Caras.dibujar(rig.cara, d.emoFeliz || (d.emoBase === 'serio' || d.emoBase === 'neutral' ? 'contento' : d.emoBase) || 'feliz', false, false, false);
+  posar(rig, d, id);
+  escena.add(rig.raiz); actual = rig.raiz;
+  rig.raiz.updateMatrixWorld(true);
+  altos[id] = encuadrar(rig.raiz, d.tipo === 'gato' || (d.ap && d.ap.cuerpo) ? 40 : 28);
+  renderer.render(escena, camara);
+  return true;
+}
+function fotoMascota(m) {
+  if (actual) escena.remove(actual);
+  const r = PA.Modelos.crearMascota(m);
+  r.raiz.traverse((o) => { if (o.isMesh) o.castShadow = false; });
+  if (r.alaI) r.alaI.rotation.z = 0.35; if (r.alaD) r.alaD.rotation.z = -0.35;
+  r.raiz.position.y = 1.2; r.raiz.rotation.y = 0.9;
+  escena.add(r.raiz); actual = r.raiz; r.raiz.updateMatrixWorld(true);
+  piso.visible = false;
+  encuadrar(r.raiz, 25);
+  renderer.render(escena, camara);
+  piso.visible = true;
+  return true;
+}
+const imagenes = {};
+// Guarda la foto: la recuerda para el póster y la manda al servidor de pruebas (lo escribe en retratos/<id>.png)
+async function subir(ruta, canvas) {
+  const blob = await new Promise((ok) => canvas.toBlob(ok, 'image/png'));
+  const r = await fetch('/guardar?ruta=' + encodeURIComponent(ruta), { method: 'POST', body: blob });
+  return r.ok;
+}
+async function guardar(id, escribir) {
+  imagenes[id] = renderer.domElement.toDataURL('image/png');
+  if (!escribir) return true;
+  // la foto final va a 384x384 (se reduce desde 768 para que quede suave)
+  const c = document.createElement('canvas'); c.width = c.height = 384;
+  const x = c.getContext('2d'); x.imageSmoothingQuality = 'high'; x.drawImage(renderer.domElement, 0, 0, 384, 384);
+  return subir('retratos/' + id + '.png', c);
+}
+async function guardarPoster() { return subir('preview.png', document.getElementById('poster')); }
+
+// ---------------- póster de la vista previa ----------------
+const carga = (src) => new Promise((ok) => { const i = new Image(); i.onload = () => ok(i); i.src = src; });
+async function poster(filas) {
+  const orden = filas.flat();
+  await document.fonts.load('bold 96px "Silkscreen"'); await document.fonts.load('28px "Pixelify Sans"');
+  const cv = document.getElementById('poster'), x = cv.getContext('2d'), W = cv.width, H = cv.height;
+  // cielo de atardecer con nubes suaves
+  const g = x.createLinearGradient(0, 0, 0, H);
+  g.addColorStop(0, '#26306e'); g.addColorStop(0.38, '#7a5aa8'); g.addColorStop(0.66, '#f08a6a'); g.addColorStop(1, '#ffd2a0');
+  x.fillStyle = g; x.fillRect(0, 0, W, H);
+  const sol = x.createRadialGradient(W / 2, 250, 10, W / 2, 250, 420); sol.addColorStop(0, 'rgba(255,240,200,0.9)'); sol.addColorStop(0.25, 'rgba(255,200,150,0.35)'); sol.addColorStop(1, 'rgba(255,180,140,0)');
+  x.fillStyle = sol; x.fillRect(0, 0, W, H);
+  x.fillStyle = 'rgba(255,255,255,0.9)';
+  for (let k = 0; k < 70; k++) { const sx = (k * 137.5) % W, sy = (k * 61.3) % 300; x.globalAlpha = 0.25 + (k % 5) * 0.12; x.fillRect(sx, sy, k % 7 ? 2 : 3, k % 7 ? 2 : 3); }
+  x.globalAlpha = 1;
+  // nubes suaves: varios copos con degradé radial (sin bordes duros)
+  const nube = (cx, cy, s, a) => {
+    for (const [dx, dy, r] of [[0, 0, 1], [0.9, 0.15, 0.78], [-0.85, 0.2, 0.72], [0.35, -0.35, 0.68], [-0.4, -0.25, 0.62], [1.6, 0.35, 0.5], [-1.5, 0.38, 0.5]]) {
+      const px = cx + dx * s, py = cy + dy * s, rr = r * s * 1.25;
+      const gr = x.createRadialGradient(px, py, rr * 0.1, px, py, rr);
+      gr.addColorStop(0, `rgba(255,238,232,${a})`); gr.addColorStop(0.6, `rgba(255,228,222,${a * 0.6})`); gr.addColorStop(1, 'rgba(255,220,215,0)');
+      x.fillStyle = gr; x.beginPath(); x.arc(px, py, rr, 0, 7); x.fill();
+    }
+  };
+  for (const [cx, cy, s, a] of [[180, 430, 70, 0.55], [1420, 410, 80, 0.55], [330, 560, 60, 0.4], [1270, 560, 66, 0.4], [80, 640, 90, 0.5], [1530, 650, 90, 0.5]]) nube(cx, cy, s, a);
+  // isla flotante donde posan todos
+  const cy0 = 770;
+  x.fillStyle = '#5a3a28'; x.beginPath(); x.moveTo(120, cy0); x.lineTo(1480, cy0); x.lineTo(1300, cy0 + 80); x.lineTo(1000, cy0 + 120); x.lineTo(800, cy0 + 200); x.lineTo(600, cy0 + 120); x.lineTo(300, cy0 + 80); x.closePath(); x.fill();
+  x.fillStyle = '#7a5038'; x.fillRect(120, cy0 - 4, 1360, 34);
+  const pasto = x.createLinearGradient(0, cy0 - 250, 0, cy0); pasto.addColorStop(0, '#8fd06a'); pasto.addColorStop(1, '#5aa046');
+  x.fillStyle = pasto; x.beginPath(); x.moveTo(170, cy0 - 230); x.lineTo(1430, cy0 - 230); x.lineTo(1480, cy0); x.lineTo(120, cy0); x.closePath(); x.fill();
+  for (let k = 0; k < 9; k++) { x.fillStyle = ['#7ff0ff', '#c79bff', '#ff8ae8'][k % 3]; const px = 380 + k * 105, py = cy0 + 60 + (k % 3) * 25; x.beginPath(); x.moveTo(px, py); x.lineTo(px + 10, py + 30); x.lineTo(px - 10, py + 30); x.closePath(); x.fill(); }
+  // el elenco, en cuatro filas (las de atrás más arriba y más chicas)
+  const base = [cy0 - 190, cy0 - 130, cy0 - 68, cy0 - 6], escala = [0.74, 0.82, 0.91, 1.0];
+  const imgs = {};
+  for (const id of orden) imgs[id] = await carga(imagenes[id]);
+  for (let f = 0; f < filas.length; f++) {
+    const fila = filas[f], ancho = 1280 + f * 40, paso = ancho / fila.length;
+    fila.forEach((id, k) => {
+      const im = imgs[id], h = (altos[id] || 1.6) * 92 * escala[f], lado = h / 0.8, px = W / 2 - ancho / 2 + paso * (k + 0.5) + (f % 2 ? paso * 0.25 : 0);
+      x.drawImage(im, px - lado / 2, base[f] - lado * 0.9, lado, lado);
+    });
+  }
+  // mascotas volando
+  for (const [id, px, py, s] of [['drogon', 250, 210, 230], ['eagly', 1340, 230, 170]]) if (imagenes[id]) { const im = await carga(imagenes[id]); x.drawImage(im, px - s / 2, py - s / 2, s, s); }
+  // título
+  x.textAlign = 'center'; x.textBaseline = 'middle';
+  x.font = 'bold 100px "Silkscreen"';
+  x.lineJoin = 'miter'; x.lineWidth = 16; x.strokeStyle = '#2b1b10'; x.strokeText('PUEBLO AGÉNTICO', W / 2, 118);
+  x.fillStyle = '#ffe8a8'; x.fillText('PUEBLO AGÉNTICO', W / 2, 118);
+  x.fillStyle = 'rgba(255,255,255,0.35)'; x.fillText('PUEBLO AGÉNTICO', W / 2, 112);
+  x.fillStyle = '#ffe8a8'; x.fillText('PUEBLO AGÉNTICO', W / 2, 116);
+  x.font = '30px "Pixelify Sans"'; x.lineWidth = 7; x.strokeText(`${DP.personajes.length} vecinos · 5 islas · una IA local que los hace hablar`, W / 2, 196);
+  x.fillStyle = '#fff6dd'; x.fillText(`${DP.personajes.length} vecinos · 5 islas · una IA local que los hace hablar`, W / 2, 196);
+  // viñeta
+  const v = x.createRadialGradient(W / 2, H / 2, H * 0.45, W / 2, H / 2, H * 1.05); v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(20,10,30,0.45)');
+  x.fillStyle = v; x.fillRect(0, 0, W, H);
+  return true;
+}
+window.ESTUDIO = { foto, fotoMascota, guardar, guardarPoster, poster, altos, ids: DP.personajes.map((p) => p.id), mascotas: DP.mascotas };
+</script>
+</body>
+</html>
